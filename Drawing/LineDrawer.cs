@@ -1,4 +1,6 @@
-﻿namespace CG_Lab4.Drawing
+﻿using Point = CG_Lab4.Models.Point;
+
+namespace CG_Lab4.Drawing
 {
     public class LineDrawer
     {

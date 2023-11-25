@@ -1,21 +1,24 @@
 using CG_Lab4.Drawing;
 using CG_Lab4.Models;
-using System.IO;
+using Point = CG_Lab4.Models.Point;
+using Rectangle = CG_Lab4.Models.Rectangle;
+using SystemRectangle = System.Drawing.Rectangle;
 
 namespace CG_Lab4
 {
     public partial class MainScreen : Form
     {
-        private List<Triangle> triangles = new List<Triangle>();
+        private List<Triangle> triangles = new();
+        private LayeredImage layeredImage = new();
 
         private Graphics graphics;
         private Bitmap bitmap;
 
         private const int scaleFactor = 5;
-        private LineDrawer lineDrawer = new LineDrawer(scaleFactor);
-        private Filler filler = new Filler(scaleFactor);
+        private LineDrawer lineDrawer = new(scaleFactor);
+        private Filler filler = new(scaleFactor);
 
-        string inputPath = "../../../triangles.txt";
+        private string inputPath = "../../../triangles.txt";
 
         public MainScreen()
         {
@@ -30,21 +33,50 @@ namespace CG_Lab4
 
         private void DrawAll()
         {
-            foreach (var tri in triangles) 
+            DrawFrame();
+
+            foreach (var tri in triangles)
             {
                 DrawTriangle(tri);
             }
         }
 
+        private void DrawFrame()
+        {
+            /*var windowRect = pictureBox1.ClientRectangle;*/
+            var p1 = new Point(0, 0);
+            var p2 = new Point(200, 0);
+            var p3 = new Point(200, 170);
+            var p4 = new Point(0, 170);
+
+            var frame = new Rectangle(p1, p2, p3, p4);
+            layeredImage.ChangeFrame(frame);
+
+            var points = layeredImage.Frame[0].Points;
+            DrawPoints(points, new SolidBrush(Color.Tan));
+        }
+        
         private void DrawTriangle(Triangle t)
         {
-            var points = lineDrawer.DrawLine(t.p1, t.p2);
-            points.AddRange(lineDrawer.DrawLine(t.p2, t.p3));
-            points.AddRange(lineDrawer.DrawLine(t.p3, t.p1));
-
             var brush = new SolidBrush(Color.Black);
+            DrawPoints(t.Points, brush);
+        }
 
-            foreach (var point in points)
+        private void DrawPoints(List<Point> points, SolidBrush? brush = null)
+        {
+            if (brush == null) brush = new SolidBrush(Color.Black);
+
+            var linesPoints = new List<Point>();
+            
+            for(int i = 0; i < points.Count - 1; i++)
+            {
+                var newPoints = lineDrawer.DrawLine(points[i], points[i + 1]);
+                linesPoints.AddRange(newPoints);
+            }
+            var lastLine = lineDrawer.DrawLine(points.Last(), points.First());
+            linesPoints.AddRange(lastLine);
+
+            foreach (var point in linesPoints)
             {
                 graphics.FillRectangle(brush, point.X, point.Y, scaleFactor, scaleFactor);
             }
@@ -52,7 +84,7 @@ namespace CG_Lab4
 
         private void InitCanvas()
         {
-            Rectangle rectangle = pictureBox1.ClientRectangle;
+            SystemRectangle rectangle = pictureBox1.ClientRectangle;
             bitmap = new Bitmap(rectangle.Width, rectangle.Height);
             graphics = Graphics.FromImage(bitmap);
             pictureBox1.Image = bitmap;

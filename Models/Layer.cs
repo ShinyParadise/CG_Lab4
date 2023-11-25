@@ -2,24 +2,32 @@
 {
     public class Layer
     {
-        private List<Triangle> figures = new List<Triangle>();
-
         public Layer() { }
 
-        public void Add(Triangle triangle)
+        public Layer(params IFigure[] figures) 
         {
-            figures.Add(triangle);
+            _figures.AddRange(figures);
         }
 
-        public void Remove(Triangle triangle)
+        public void Add(params IFigure[] figures)
         {
-            figures.Remove(triangle);
+            _figures.AddRange(figures);
         }
 
-        public Triangle this[int index]
+        public void Remove(IFigure figure)
         {
-            get => figures[index];
-            set => figures[index] = value;
+            _figures.Remove(figure);
         }
+
+        public IFigure this[int index]
+        {
+            get => _figures[index];
+            set => _figures[index] = value;
+        }
+
+
+        private List<IFigure> _figures = new();
+
+        public List<IFigure> Figures { get => _figures; set => _figures = value; }
     }
 }
