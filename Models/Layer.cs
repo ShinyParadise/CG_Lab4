@@ -1,17 +1,17 @@
-﻿namespace CG_Lab4
+﻿namespace CG_Lab4.Models
 {
     public class Layer
     {
         private List<Triangle> figures = new List<Triangle>();
 
-        public Layer() {}
+        public Layer() { }
 
         public void Add(Triangle triangle)
         {
             figures.Add(triangle);
         }
 
-        public void Remove(Triangle triangle) 
+        public void Remove(Triangle triangle)
         {
             figures.Remove(triangle);
         }
