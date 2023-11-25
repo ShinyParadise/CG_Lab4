@@ -36,7 +36,7 @@
             // 
             pictureBox1.Location = new Point(12, 12);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(1192, 591);
+            pictureBox1.Size = new Size(1192, 991);
             pictureBox1.TabIndex = 0;
             pictureBox1.TabStop = false;
             // 
@@ -44,7 +44,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1216, 615);
+            ClientSize = new Size(1216, 915);
             Controls.Add(pictureBox1);
             Name = "MainScreen";
             Text = "Lab 4";
