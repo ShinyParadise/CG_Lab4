@@ -4,13 +4,10 @@
     {
         public Triangle(Point p1, Point p2, Point p3)
         {
-            _points = new List<Point> { p1, p2, p3 };
+            Points = new List<Point> { p1, p2, p3 };
         }
 
-        public List<Point> Points => _points;
-        public Color FillColor { get => _fillColor; set => _fillColor = value; }
-
-        private List<Point> _points;
-        private Color _fillColor;
+        public List<Point> Points { get; set; }
+        public Color FillColor { get; set; }
     }
 }

@@ -2,7 +2,7 @@
 {
     public interface IFigure
     {
-        public List<Point> Points { get; }
+        public List<Point> Points { get; set; }
         public Color FillColor { get; set; }
     }
 }
