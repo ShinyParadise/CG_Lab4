@@ -4,13 +4,6 @@ namespace CG_Lab4.Drawing
 {
     public class LineDrawer
     {
-        private int _scaleFactor;
-
-        public LineDrawer(int scaleFactor)
-        {
-            _scaleFactor = scaleFactor;
-        }
-
         public List<Point> DrawLine(Point point1, Point point2)
         {
             List<Point> linePoints = new List<Point>();
@@ -29,7 +22,7 @@ namespace CG_Lab4.Drawing
 
             while (true)
             {
-                linePoints.Add(new Point(x1 * _scaleFactor, y1 * _scaleFactor));
+                linePoints.Add(new Point(x1, y1));
 
                 if (x1 == x2 && y1 == y2)
                     break;

@@ -11,37 +11,49 @@ namespace CG_Lab4.Drawing
             _scaleFactor = scaleFactor;
         }
 
-        public List<Point> FloodFill(Bitmap image, Point startPoint, Color fillColor)
+        public void FloodFill(ref Bitmap image, ref Graphics graphics, Point startPoint, Color fillColor, Color oldColor)
         {
-            var fillPoints = new List<Point>();
-            Color oldColor = image.GetPixel(startPoint.X, startPoint.Y);
-            if (oldColor == fillColor) return fillPoints;
-
-            List<Point> filledPoints = new List<Point>();
-            Stack<Point> stack = new Stack<Point>();
+            Stack<Point> stack = new();
             stack.Push(startPoint);
+            
+            var brush = new SolidBrush(fillColor);
 
             while (stack.Count > 0)
             {
-                Point point = stack.Pop();
-                int x = point.X;
-                int y = point.Y;
+                Point currentPoint = stack.Pop();
+
+                int x = (currentPoint.X * _scaleFactor);
+                int y = (currentPoint.Y * _scaleFactor);
 
                 if (x < 0 || x >= image.Width || y < 0 || y >= image.Height)
-                    continue;
-
-                if (image.GetPixel(x * _scaleFactor, y * _scaleFactor) == oldColor)
                 {
-                    filledPoints.Add(new Point(x, y));
+                    continue; // Пропускаем, если координаты за границами изображения
+                }
 
-                    stack.Push(new Point(x + 1, y));
-                    stack.Push(new Point(x - 1, y));
-                    stack.Push(new Point(x, y + 1));
-                    stack.Push(new Point(x, y - 1));
+                var currentColor = image.GetPixel(x, y);
+
+                if (currentColor.ToArgb() == oldColor.ToArgb())
+                {
+                    graphics.FillRectangle(brush, x, y, _scaleFactor, _scaleFactor);
+
+                    var rightNeighbor = new Point(currentPoint.X + 1, currentPoint.Y);
+                    var leftNeighbor = new Point(currentPoint.X - 1, currentPoint.Y);
+                    var bottomNeighbor = new Point(currentPoint.X, currentPoint.Y + 1);
+                    var upperNeighbor = new Point(currentPoint.X, currentPoint.Y - 1);
+
+                    if (!stack.Contains(rightNeighbor))
+                        stack.Push(rightNeighbor);
+
+                    if (!stack.Contains(leftNeighbor))
+                        stack.Push(leftNeighbor);
+
+                    if (!stack.Contains(bottomNeighbor))
+                        stack.Push(bottomNeighbor);
+
+                    if (!stack.Contains(upperNeighbor))
+                        stack.Push(upperNeighbor);
                 }
             }
-
-            return fillPoints;
         }
     }
 }

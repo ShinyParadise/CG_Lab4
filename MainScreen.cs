@@ -1,5 +1,6 @@
 using CG_Lab4.Drawing;
 using CG_Lab4.Models;
+using CG_Lab4.Utils;
 using Point = CG_Lab4.Models.Point;
 using Rectangle = CG_Lab4.Models.Rectangle;
 using SystemRectangle = System.Drawing.Rectangle;
@@ -13,9 +14,10 @@ namespace CG_Lab4
 
         private Graphics graphics;
         private Bitmap bitmap;
+        private Color bgColor = Color.LightGray;
 
-        private const int scaleFactor = 5;
-        private LineDrawer lineDrawer = new(scaleFactor);
+        private const int scaleFactor = 4;
+        private LineDrawer lineDrawer = new();
         private Filler filler = new(scaleFactor);
 
         private string inputPath = "../../../triangles_color.txt";
@@ -38,7 +40,14 @@ namespace CG_Lab4
             foreach (var tri in triangles)
             {
                 DrawTriangle(tri);
+                FillTriangle(tri);
             }
+        }
+
+        private void FillTriangle(Triangle tri)
+        {
+            var insidePoint = PolygonPointGenerator.GenerateRandomPointInsidePolygon(tri.Points);
+            filler.FloodFill(ref bitmap, ref graphics, insidePoint, tri.FillColor, bgColor);
         }
 
         private void DrawFrame()
@@ -78,7 +87,7 @@ namespace CG_Lab4
 
             foreach (var point in linesPoints)
             {
-                graphics.FillRectangle(brush, point.X, point.Y, scaleFactor, scaleFactor);
+                graphics.FillRectangle(brush, point.X * scaleFactor, point.Y * scaleFactor, scaleFactor, scaleFactor);
             }
         }
 
@@ -88,6 +97,7 @@ namespace CG_Lab4
             bitmap = new Bitmap(rectangle.Width, rectangle.Height);
             graphics = Graphics.FromImage(bitmap);
             pictureBox1.Image = bitmap;
+            graphics.Clear(bgColor);
         }
 
         private void InitTriangles()
