@@ -1,6 +1,6 @@
 ﻿namespace CG_Lab4.Models
 {
-    public struct Point
+    public struct Point : IEquatable<Point>
     {
         public int X;
         public int Y;
@@ -30,6 +30,13 @@
         public static Point operator + (Point a, int b)
         {
             return new Point(a.X + b, a.Y + b);
+        }
+
+        public readonly bool Equals(Point other) => X == other.X && Y == other.Y && isVisible == other.isVisible;
+
+        public override readonly bool Equals(object? obj)
+        {
+            return obj is Point point && Equals(point);
         }
     }
 }
