@@ -18,7 +18,7 @@ namespace CG_Lab4
         private LineDrawer lineDrawer = new(scaleFactor);
         private Filler filler = new(scaleFactor);
 
-        private string inputPath = "../../../triangles.txt";
+        private string inputPath = "../../../triangles_color.txt";
 
         public MainScreen()
         {
@@ -102,6 +102,7 @@ namespace CG_Lab4
                         if (line == null) return;
 
                         string[] numbersAsString = line.Split(' ', '\t', '\n', '\r');
+                        Color color = Color.FromName(numbersAsString[6]);
 
                         if (int.TryParse(numbersAsString[0], out int x1) &&
                             int.TryParse(numbersAsString[1], out int y1) &&
@@ -110,7 +111,9 @@ namespace CG_Lab4
                             int.TryParse(numbersAsString[4], out int x3) &&
                             int.TryParse(numbersAsString[5], out int y3))
                         {
-                            triangles.Add(new(new Point(x1, y1), new Point(x2, y2), new Point(x3, y3)));
+                            Triangle triangle = new(new Point(x1, y1), new Point(x2, y2), new Point(x3, y3));
+                            triangle.FillColor = color;
+                            triangles.Add(triangle);
                         }
                         else
                         {
