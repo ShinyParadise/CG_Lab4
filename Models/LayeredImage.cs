@@ -6,7 +6,7 @@
 
         public void ChangeFrame(Rectangle frame)
         {
-            _layers.Add(new(frame));
+            _layers.Insert(0, new(frame));
         }
 
         public void Add(params Layer[] layers) 
@@ -20,8 +20,8 @@
         }
 
         public List<Layer> Layers { get => _layers; }
-        public Layer Frame { get => _layers[0]; set => _layers[0] = value; }
+        public Rectangle Frame { get => (Rectangle)_layers[0][0]; set => _layers[0][0] = value; }
 
-        private List<Layer> _layers = new List<Layer>();
+        private List<Layer> _layers = new(1);
     }
 }

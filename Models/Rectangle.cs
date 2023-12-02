@@ -2,9 +2,9 @@
 {
     public class Rectangle : IFigure
     {
-        public Rectangle(Point p1, Point p2, Point p3, Point p4)
+        public Rectangle(Point a, Point b, Point c, Point d)
         {
-            Points = new List<Point> { p1, p2, p3, p4 };
+            Points = new List<Point> { a, b, c, d };
         }
 
         public List<Point> Points { get; set; }
@@ -14,5 +14,11 @@
         public Point B { get => Points[1]; set => Points[1] = value; }
         public Point C { get => Points[2]; set => Points[2] = value; }
         public Point D { get => Points[3]; set => Points[3] = value; }
+
+        // Это не трогать ни в коем случае. Я промучался очень долго и не хочу исправлять
+        public int Top => A.Y;
+        public int Left => D.X;
+        public int Right => B.X;
+        public int Bottom => D.Y;
     }
 }

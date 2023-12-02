@@ -25,21 +25,9 @@
             set => _figures[index] = value;
         }
 
-        public void AddCutted(params IFigure[] figures)
-        {
-            _cutFigures.AddRange(figures);
-        }
 
-        public void RemoveCutted(IFigure figure)
-        {
-            _cutFigures.Remove(figure);
-        }
+        private List<IFigure> _figures = new(1);
 
-
-        private List<IFigure> _figures = new();
-        private List<IFigure> _cutFigures = new();
         public List<IFigure> Figures { get => _figures; set => _figures = value; }
-        public List<IFigure> CutFigures { get => _cutFigures; set => _cutFigures = value; }
-
     }
 }

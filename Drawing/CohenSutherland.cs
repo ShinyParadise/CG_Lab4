@@ -1,7 +1,4 @@
 ﻿using CG_Lab4.Models;
-using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
-using System.Security.Cryptography.Pkcs;
 using Point = CG_Lab4.Models.Point;
 using Rectangle = CG_Lab4.Models.Rectangle;
 
@@ -16,129 +13,81 @@ namespace CG_Lab4.Drawing
         private const int BOTTOM = 4; // 0100
         private const int TOP = 8;    // 1000
 
-        public static IFigure ClipToRectangle(IFigure triangle, IFigure rect)
+        private static int ComputeOutCode(Rectangle clipRectangle, Point p)
         {
-            List<Point> points = new(); 
-            Polygon polygon = new Polygon();
-            for (int i = 0; i < triangle.Points.Count - 1; i++)
+            int code = INSIDE;
+
+            if (p.X < clipRectangle.Left)
+                code |= LEFT;
+            else if (p.X > clipRectangle.Right)
+                code |= RIGHT;
+
+            if (p.Y < clipRectangle.Top)
+                code |= TOP;
+            else if (p.Y > clipRectangle.Bottom)
+                code |= BOTTOM;
+
+            return code;
+        }
+
+        // Отсечение отрезка прямоугольным окном
+        public static bool ClipLine(Rectangle clipRectangle, ref Point p1, ref Point p2)
+        {
+            int outcode1 = ComputeOutCode(clipRectangle, p1);
+            int outcode2 = ComputeOutCode(clipRectangle, p2);
+            bool accept = false;
+
+            while (true)
             {
-                points = ClipPoint(triangle.Points, i, rect.Points[3].X, rect.Points[1].Y, rect.Points[1].X, rect.Points[3].Y);
-                foreach (var p in points)
+                if ((outcode1 | outcode2) == 0)
                 {
-                    if (!polygon.Points.Contains(p))
+                    accept = true;
+                    break;
+                }
+                else if ((outcode1 & outcode2) != 0)
+                {
+                    break;
+                }
+                else
+                {
+                    int x, y;
+                    int outcodeOut = (outcode1 != 0) ? outcode1 : outcode2;
+
+                    if ((outcodeOut & TOP) != 0)
                     {
-                        polygon.Points.Add(p);
+                        x = p1.X + (p2.X - p1.X) * (clipRectangle.Top - p1.Y) / (p2.Y - p1.Y);
+                        y = clipRectangle.Top;
+                    }
+                    else if ((outcodeOut & BOTTOM) != 0)
+                    {
+                        x = p1.X + (p2.X - p1.X) * (clipRectangle.Bottom - p1.Y) / (p2.Y - p1.Y);
+                        y = clipRectangle.Bottom;
+                    }
+                    else if ((outcodeOut & RIGHT) != 0)
+                    {
+                        y = p1.Y + (p2.Y - p1.Y) * (clipRectangle.Right - p1.X) / (p2.X - p1.X);
+                        x = clipRectangle.Right;
+                    }
+                    else
+                    {
+                        y = p1.Y + (p2.Y - p1.Y) * (clipRectangle.Left - p1.X) / (p2.X - p1.X);
+                        x = clipRectangle.Left;
+                    }
+
+                    if (outcodeOut == outcode1)
+                    {
+                        p1 = new Point(x, y);
+                        outcode1 = ComputeOutCode(clipRectangle, p1);
+                    }
+                    else
+                    {
+                        p2 = new Point(x, y);
+                        outcode2 = ComputeOutCode(clipRectangle, p2);
                     }
                 }
             }
-            points = ClipPoint(triangle.Points, triangle.Points.Count, rect.Points[3].X, rect.Points[1].Y, rect.Points[1].X, rect.Points[3].Y);
-            foreach (var p in points)
-            {
-                if (!polygon.Points.Contains(p))
-                {
-                    polygon.Points.Add(p);
-                }
-            }
-            return polygon;
-        }
 
-        private static List<Point> ClipPoint(List<Point> vertices, int index, int xmin, int ymin, int xmax, int ymax)
-        {
-            List<Point> points = new List<Point>();
-            int code = INSIDE;
-            Point point = new Point();
-            Point pBegin;
-            Point pEnd;
-            if (index != vertices.Count)
-            {
-                pBegin = vertices[index];
-                pEnd = vertices[index + 1];
-            }
-            else
-            {
-                pBegin = vertices[0];
-                pEnd = vertices[index - 1];
-            }
-
-            int codeBegin = FindCode(pBegin, xmin, ymin, xmax, ymax);
-            int codeEnd = FindCode(pEnd, xmin, ymin, xmax, ymax);
-
-            while ((codeBegin | codeEnd) != 0)
-            {
-                /* если обе точки с одной стороны прямоугольника, то отрезок не пересекает прямоугольник */
-                if ((codeBegin & codeEnd) != 0)
-                {
-                    return points;
-                }
-                /* выбираем точку c с ненулевым кодом */
-                if ((codeBegin) != 0)
-                {
-                    code = codeBegin;
-                    point = pBegin;
-                }
-                else
-                {
-                    code = codeEnd;
-                    point = pEnd;
-                }
-
-                if ((code & LEFT) != 0)
-                {
-                    point.Y += (pBegin.Y - pEnd.Y) * (xmin - point.X) / (pBegin.X - pEnd.X);
-                    point.X = xmin;
-                }
-                else if ((code & RIGHT) != 0)
-                {
-                    point.Y += (pBegin.Y - pEnd.Y) * (xmax - point.X) / (pBegin.X - pEnd.X);
-                    point.X = xmax;
-                }
-
-                /* если c ниже r, то передвигаем c на прямую y = r->y_min
-                если c выше r, то передвигаем c на прямую y = r->y_max */
-                else if ((code & BOTTOM) != 0)
-                {
-                    point.X += (pBegin.X - pEnd.X) * (ymin - point.Y) / (pBegin.Y - pEnd.Y);
-                    point.Y = ymin;
-                }
-                else if ((code & TOP) != 0)
-                {
-                    point.X += (pBegin.X - pEnd.X) * (ymax - point.Y) / (pBegin.Y - pEnd.Y);
-                    point.Y = ymax;
-                }
-
-                if (code == codeBegin)
-                {
-                    pBegin = point;
-                    codeBegin = FindCode(pBegin, xmin, ymin, xmax, ymax);
-                }
-                else
-                {
-                    pEnd = point;
-                    codeEnd = FindCode(pEnd, xmin, ymin, xmax, ymax);
-                }
-            }
-            
-            points.Add(pBegin);
-            points.Add(pEnd);
-            return points;
-        }
-
-
-        private static int FindCode(Point point, int xmin, int ymin, int xmax, int ymax)
-        {
-            int code = INSIDE;
-
-            if (point.X < xmin)
-                code |= LEFT;
-            else if (point.X > xmax)
-                code |= RIGHT;
-
-            if (point.Y < ymin)
-                code |= BOTTOM;
-            else if (point.Y > ymax)
-                code |= TOP;
-
-            return code;
+            return accept;
         }
     }
 }

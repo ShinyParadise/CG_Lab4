@@ -1,7 +1,6 @@
 using CG_Lab4.Drawing;
 using CG_Lab4.Models;
 using CG_Lab4.Utils;
-using System;
 using Point = CG_Lab4.Models.Point;
 using Rectangle = CG_Lab4.Models.Rectangle;
 using SystemRectangle = System.Drawing.Rectangle;
@@ -38,55 +37,69 @@ namespace CG_Lab4
 
         private void DrawAll()
         {
-            //DrawFrame();
-            // либо передавать сюда слой
-            foreach (var lay in layeredImage.Layers)
+            ClipAllLayersToFrame();
+
+            foreach (var layer in layeredImage.Layers)
             {
-                foreach (var fig in lay.Figures)
-                {
-                    lay.CutFigures.Add(CohenSutherland.ClipToRectangle(fig, layeredImage.Frame[0]));
-                }
-                foreach (var fig in lay.CutFigures)
+                foreach (var fig in layer.Figures)
                 {
                     if (fig.Points.Count != 0)
                     {
                         DrawFigure(fig);
-                        //FillTriangle(fig);
+                        FillFigure(fig);
                     }
                 }
             }
         }
 
-        private void FillTriangle(IFigure? tri)
+        private void ClipAllLayersToFrame()
         {
-            var insidePoint = PolygonPointGenerator.GenerateRandomPointInsidePolygon(tri.Points); // переделать на любую фигуру
-            filler.FloodFill(ref bitmap, ref graphics, insidePoint, tri.FillColor, bgColor);
+            for (int i = 1; i < layeredImage.Layers.Count; i++)
+            {
+                var layer = layeredImage.Layers[i];
+                ClipToFrame(layer);
+            }
+        }
+
+        private void ClipToFrame(Layer layer)
+        {
+            for (int i = 0; i < layer.Figures.Count; i++)
+            {
+                IFigure fig = layer.Figures[i];
+                fig.ClipToFrame(layeredImage.Frame);
+            }
+        }
+
+        private void FillFigure(IFigure figure)
+        {
+            var insidePoint = PolygonPointGenerator.GenerateRandomPointInsidePolygon(figure.Points);
+            filler.FloodFill(ref bitmap, ref graphics, insidePoint, figure.FillColor, bgColor);
         }
 
         private void DrawFrame()
         {
             /*var windowRect = pictureBox1.ClientRectangle;*/
-            var p1 = new Point(0, 60);
-            var p2 = new Point(150, 60);
-            var p3 = new Point(150, 100);
-            var p4 = new Point(0, 100);
+            var a = new Point(40, 40);        // left top
+            var b = new Point(180, 40);      // right top
+            var c = new Point(180, 100);    // right bot
+            var d = new Point(40, 100);      // left bot
 
-            var frame = new Rectangle(p1, p2, p3, p4);
+            var frame = new Rectangle(a, b, c, d);
             layeredImage.ChangeFrame(frame);
 
-            var points = layeredImage.Frame[0].Points;
+            var points = layeredImage.Frame.Points;
             DrawPoints(points, new SolidBrush(Color.Tan));
         }
         
-        private void DrawFigure(IFigure t)
+        private void DrawFigure(IFigure f)
         {
             var brush = new SolidBrush(Color.Black);
-            DrawPoints(t.Points, brush);
+            DrawPoints(f.Points, brush);
         }
 
         private void DrawPoints(List<Point> points, SolidBrush? brush = null)
         {
-            if (brush == null) brush = new SolidBrush(Color.Black);
+            brush ??= new SolidBrush(Color.Black);
 
             var linesPoints = new List<Point>();
             
