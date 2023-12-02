@@ -51,8 +51,8 @@ namespace CG_Lab4
                     if (fig.Points.Count != 0)
                     {
                         DrawFigure(fig);
+                        //FillTriangle(fig);
                     }
-                    //FillTriangle(fig);
                 }
             }
         }
@@ -66,10 +66,10 @@ namespace CG_Lab4
         private void DrawFrame()
         {
             /*var windowRect = pictureBox1.ClientRectangle;*/
-            var p1 = new Point(0, 0);
-            var p2 = new Point(150, 0);
-            var p3 = new Point(150, 170);
-            var p4 = new Point(0, 170);
+            var p1 = new Point(0, 60);
+            var p2 = new Point(150, 60);
+            var p3 = new Point(150, 100);
+            var p4 = new Point(0, 100);
 
             var frame = new Rectangle(p1, p2, p3, p4);
             layeredImage.ChangeFrame(frame);

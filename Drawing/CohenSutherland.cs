@@ -1,4 +1,5 @@
 ﻿using CG_Lab4.Models;
+using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
 using System.Security.Cryptography.Pkcs;
 using Point = CG_Lab4.Models.Point;
@@ -17,12 +18,27 @@ namespace CG_Lab4.Drawing
 
         public static IFigure ClipToRectangle(IFigure triangle, IFigure rect)
         {
+            List<Point> points = new(); 
             Polygon polygon = new Polygon();
             for (int i = 0; i < triangle.Points.Count - 1; i++)
             {
-                polygon.Points.AddRange(ClipPoint(triangle.Points, i, rect.Points[3].X, rect.Points[1].Y, rect.Points[1].X, rect.Points[3].Y));
+                points = ClipPoint(triangle.Points, i, rect.Points[3].X, rect.Points[1].Y, rect.Points[1].X, rect.Points[3].Y);
+                foreach (var p in points)
+                {
+                    if (!polygon.Points.Contains(p))
+                    {
+                        polygon.Points.Add(p);
+                    }
+                }
             }
-            polygon.Points.AddRange(ClipPoint(triangle.Points, triangle.Points.Count, rect.Points[3].X, rect.Points[1].Y, rect.Points[1].X, rect.Points[3].Y));
+            points = ClipPoint(triangle.Points, triangle.Points.Count, rect.Points[3].X, rect.Points[1].Y, rect.Points[1].X, rect.Points[3].Y);
+            foreach (var p in points)
+            {
+                if (!polygon.Points.Contains(p))
+                {
+                    polygon.Points.Add(p);
+                }
+            }
             return polygon;
         }
 
