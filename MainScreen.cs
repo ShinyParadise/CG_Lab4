@@ -1,6 +1,7 @@
 using CG_Lab4.Drawing;
 using CG_Lab4.Models;
 using CG_Lab4.Utils;
+using System;
 using Point = CG_Lab4.Models.Point;
 using Rectangle = CG_Lab4.Models.Rectangle;
 using SystemRectangle = System.Drawing.Rectangle;
@@ -28,6 +29,8 @@ namespace CG_Lab4
 
             InitCanvas();
 
+            DrawFrame();
+
             InitTriangles();
 
             DrawAll();
@@ -35,18 +38,28 @@ namespace CG_Lab4
 
         private void DrawAll()
         {
-            DrawFrame();
-
-            foreach (var tri in triangles)
+            //DrawFrame();
+            // либо передавать сюда слой
+            foreach (var lay in layeredImage.Layers)
             {
-                DrawTriangle(tri);
-                FillTriangle(tri);
+                foreach (var fig in lay.Figures)
+                {
+                    lay.CutFigures.Add(CohenSutherland.ClipToRectangle(fig, layeredImage.Frame[0]));
+                }
+                foreach (var fig in lay.CutFigures)
+                {
+                    if (fig.Points.Count != 0)
+                    {
+                        DrawFigure(fig);
+                    }
+                    //FillTriangle(fig);
+                }
             }
         }
 
-        private void FillTriangle(Triangle tri)
+        private void FillTriangle(IFigure? tri)
         {
-            var insidePoint = PolygonPointGenerator.GenerateRandomPointInsidePolygon(tri.Points);
+            var insidePoint = PolygonPointGenerator.GenerateRandomPointInsidePolygon(tri.Points); // переделать на любую фигуру
             filler.FloodFill(ref bitmap, ref graphics, insidePoint, tri.FillColor, bgColor);
         }
 
@@ -54,8 +67,8 @@ namespace CG_Lab4
         {
             /*var windowRect = pictureBox1.ClientRectangle;*/
             var p1 = new Point(0, 0);
-            var p2 = new Point(200, 0);
-            var p3 = new Point(200, 170);
+            var p2 = new Point(150, 0);
+            var p3 = new Point(150, 170);
             var p4 = new Point(0, 170);
 
             var frame = new Rectangle(p1, p2, p3, p4);
@@ -65,7 +78,7 @@ namespace CG_Lab4
             DrawPoints(points, new SolidBrush(Color.Tan));
         }
         
-        private void DrawTriangle(Triangle t)
+        private void DrawFigure(IFigure t)
         {
             var brush = new SolidBrush(Color.Black);
             DrawPoints(t.Points, brush);
@@ -124,6 +137,8 @@ namespace CG_Lab4
                             Triangle triangle = new(new Point(x1, y1), new Point(x2, y2), new Point(x3, y3));
                             triangle.FillColor = color;
                             triangles.Add(triangle);
+                            Layer layer = new(triangle);
+                            layeredImage.Add(layer);
                         }
                         else
                         {
