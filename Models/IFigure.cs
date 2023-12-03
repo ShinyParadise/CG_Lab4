@@ -31,5 +31,10 @@ namespace CG_Lab4.Models
 
             Points = clippedPoints;
         }
+
+        public void ClipAgainstPolygon(List<Point> clipPolygon)
+        {
+            Points = SutherlandHodgman.Clip(Points, clipPolygon);
+        }
     }
 }

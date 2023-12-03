@@ -1,6 +1,6 @@
 ﻿namespace CG_Lab4.Models
 {
-    class Polygon : IFigure
+    public class Polygon : IFigure
     {
         public Polygon(params Point[] points)
         {
