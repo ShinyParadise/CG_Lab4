@@ -38,7 +38,8 @@ namespace CG_Lab4
         private void DrawAll()
         {
             ClipAllLayersToFrame();
-
+            ClipAllLayers();
+            
             foreach (var layer in layeredImage.Layers)
             {
                 foreach (var fig in layer.Figures)
@@ -46,12 +47,48 @@ namespace CG_Lab4
                     if (fig.Points.Count != 0)
                     {
                         DrawFigure(fig);
-                        FillFigure(fig);
+                        //FillFigure(fig);
                     }
                 }
             }
         }
 
+
+        private void ClipAllLayers()
+        {
+            for (int j = 1; j < layeredImage.Layers.Count; j++)
+            {
+                for (int i = j + 1; i < layeredImage.Layers.Count; i++)
+                {
+                    // it's better to do foreach or smth but there will be 1 figure anyway
+                    List<Point> insides = SutherlandHodgman.ClipPolygon(layeredImage.Layers[i].Figures[0].Points, layeredImage.Layers[j].Figures[0].Points);
+
+                    // каким-то образом надо проверить содержимое контейнера на совпадение с обрезающей фигурой
+                    int resLen = insides.Count;
+                    foreach (Point ins in insides)
+                    {
+                        if (layeredImage.Layers[j].Figures[0].Points.Contains(ins))
+                            resLen--;
+                        else break;
+
+                    }
+                    if ( resLen > 0)
+                    {
+                        foreach (Point ins in insides)
+                        {
+                            if (layeredImage.Layers[i].Figures[0].Points.Contains(ins))
+                            {
+                                layeredImage.Layers[i].Figures[0].Points.Remove(ins);
+                            }
+                            else
+                            {
+                                layeredImage.Layers[i].Figures[0].Points.Add(ins);
+                            }
+                        }
+                    }
+                }
+            }
+        }
         private void ClipAllLayersToFrame()
         {
             for (int i = 1; i < layeredImage.Layers.Count; i++)
@@ -79,10 +116,10 @@ namespace CG_Lab4
         private void DrawFrame()
         {
             /*var windowRect = pictureBox1.ClientRectangle;*/
-            var a = new Point(40, 40);        // left top
-            var b = new Point(180, 40);      // right top
-            var c = new Point(180, 100);    // right bot
-            var d = new Point(40, 100);      // left bot
+            var a = new Point(00, 00);        // left top
+            var b = new Point(150, 00);      // right top
+            var c = new Point(150, 170);    // right bot
+            var d = new Point(00, 170);      // left bot
 
             var frame = new Rectangle(a, b, c, d);
             layeredImage.ChangeFrame(frame);

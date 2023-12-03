@@ -6,7 +6,7 @@ namespace CG_Lab4.Drawing
     {
         public static List<Point> ClipPolygon(List<Point> subjectPolygon, List<Point> clipPolygon)
         {
-            List<Point> clippedPolygon = new List<Point>(subjectPolygon); // все равно портится
+            List<Point> clippedPolygon = new List<Point>(subjectPolygon);
 
             for (int i = 0; i < clipPolygon.Count; i++)
             {
@@ -25,7 +25,7 @@ namespace CG_Lab4.Drawing
 
             for (int i = 0; i < polygon.Count; i++)
             {
-                Point current = polygon[i]; //new Point(polygon[i].X, polygon[i].Y);
+                Point current = polygon[i];
                 Point next = polygon[(i + 1) % polygon.Count];
 
                 if (IsInside(current.X, current.Y, x1, y1, x2, y2))
@@ -42,9 +42,9 @@ namespace CG_Lab4.Drawing
                 }
                 else if (IsInside(next.X, next.Y, x1, y1, x2, y2))
                 {
+                    clippedPolygon.Add(next);
                     Point intersection = GetIntersection(current, next, x1, y1, x2, y2);
                     clippedPolygon.Add(intersection);
-                    clippedPolygon.Add(next);
                 }
             }
 
@@ -58,9 +58,10 @@ namespace CG_Lab4.Drawing
 
         private static Point GetIntersection(Point p1, Point p2, int x1, int y1, int x2, int y2)
         {
+            int den = (p1.X - p2.X) * (y1 - y2) - (p1.Y - p2.Y) * (x1 - x2);
+            if (den == 0) { return new Point { X = p1.X, Y = p1.Y }; }
             int num_x = (p1.X * p2.Y - p1.Y * p2.X) * (x1 - x2) -
                 (p1.X - p2.X) * (x1 * y2 - y1 * x2);
-            int den = (p1.X - p2.X) * (y1 - y2) - (p1.Y - p2.Y) * (x1 - x2);
             int num_y = (p1.X * p2.Y - p1.Y * p2.X) * (y1 - y2) -
                 (p1.Y - p2.Y) * (x1 * y2 - y1 * x2);
             return new Point { X = num_x / den, Y = num_y / den };

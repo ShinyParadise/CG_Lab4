@@ -32,7 +32,7 @@
             return new Point(a.X + b, a.Y + b);
         }
 
-        public readonly bool Equals(Point other) => X == other.X && Y == other.Y && isVisible == other.isVisible;
+        public readonly bool Equals(Point other) => X == other.X && Y == other.Y;
 
         public override readonly bool Equals(object? obj)
         {
