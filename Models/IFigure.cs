@@ -18,8 +18,14 @@ namespace CG_Lab4.Models
 
                 if (CohenSutherland.ClipLine(clipRectangle, ref p1, ref p2))
                 {
-                    clippedPoints.Add(p1);
-                    clippedPoints.Add(p2);
+                    if (!clippedPoints.Contains(p1))
+                    {
+                        clippedPoints.Add(p1);
+                    }
+                    if (!clippedPoints.Contains(p2))
+                    {
+                        clippedPoints.Add(p2);
+                    }
                 }
             }
 

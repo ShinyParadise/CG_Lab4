@@ -6,7 +6,7 @@ namespace CG_Lab4.Drawing
     {
         public static List<Point> ClipPolygon(List<Point> subjectPolygon, List<Point> clipPolygon)
         {
-            List<Point> clippedPolygon = new List<Point>(subjectPolygon);
+            List<Point> clippedPolygon = new List<Point>(subjectPolygon); // все равно портится
 
             for (int i = 0; i < clipPolygon.Count; i++)
             {
@@ -16,7 +16,6 @@ namespace CG_Lab4.Drawing
 
                 clippedPolygon = ClipEdge(clippedPolygon, clipEdgeStart.X, clipEdgeStart.Y, clipEdgeEnd.X, clipEdgeEnd.Y);
             }
-
             return clippedPolygon;
         }
 
@@ -26,7 +25,7 @@ namespace CG_Lab4.Drawing
 
             for (int i = 0; i < polygon.Count; i++)
             {
-                Point current = polygon[i];
+                Point current = polygon[i]; //new Point(polygon[i].X, polygon[i].Y);
                 Point next = polygon[(i + 1) % polygon.Count];
 
                 if (IsInside(current.X, current.Y, x1, y1, x2, y2))
@@ -36,13 +35,16 @@ namespace CG_Lab4.Drawing
                         Point intersection = GetIntersection(current, next, x1, y1, x2, y2);
                         clippedPolygon.Add(intersection);
                     }
-
-                    clippedPolygon.Add(next);
+                    else
+                    {
+                        clippedPolygon.Add(next);
+                    }
                 }
                 else if (IsInside(next.X, next.Y, x1, y1, x2, y2))
                 {
                     Point intersection = GetIntersection(current, next, x1, y1, x2, y2);
                     clippedPolygon.Add(intersection);
+                    clippedPolygon.Add(next);
                 }
             }
 
@@ -56,25 +58,12 @@ namespace CG_Lab4.Drawing
 
         private static Point GetIntersection(Point p1, Point p2, int x1, int y1, int x2, int y2)
         {
-            int dx1 = p2.X - p1.X;
-            int dy1 = p2.Y - p1.Y;
-
-            int dx2 = x2 - x1;
-            int dy2 = y2 - y1;
-
-            int denom = dx1 * dy2 - dy1 * dx2;
-
-            if (denom == 0)
-            {
-                return p1;  // Линии параллельны или совпадают
-            }
-
-            int t = ((x1 - p1.X) * dy2 - (y1 - p1.Y) * dx2) / denom;
-
-            int ix = p1.X + t * dx1;
-            int iy = p1.Y + t * dy1;
-
-            return new Point { X = ix, Y = iy };
+            int num_x = (p1.X * p2.Y - p1.Y * p2.X) * (x1 - x2) -
+                (p1.X - p2.X) * (x1 * y2 - y1 * x2);
+            int den = (p1.X - p2.X) * (y1 - y2) - (p1.Y - p2.Y) * (x1 - x2);
+            int num_y = (p1.X * p2.Y - p1.Y * p2.X) * (y1 - y2) -
+                (p1.Y - p2.Y) * (x1 * y2 - y1 * x2);
+            return new Point { X = num_x / den, Y = num_y / den };
         }
     }
 }
