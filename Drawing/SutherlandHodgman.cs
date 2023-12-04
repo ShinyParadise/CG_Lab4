@@ -4,7 +4,7 @@ namespace CG_Lab4.Drawing
 {
     public class SutherlandHodgman
     {
-        public static List<Point> ClipPolygon(List<Point> subjectPolygon, List<Point> clipPolygon)
+        public static List<Point> Clip(List<Point> subjectPolygon, List<Point> clipPolygon)
         {
             List<Point> clippedPolygon = new List<Point>(subjectPolygon);
 

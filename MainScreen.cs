@@ -38,7 +38,7 @@ namespace CG_Lab4
         private void DrawAll()
         {
             layeredImage.ClipAllLayersToFrame();
-            layeredImage.ClipAllLayers();
+            //layeredImage.ClipAllLayers();
             
             foreach (var layer in layeredImage.Layers)
             {
@@ -64,8 +64,8 @@ namespace CG_Lab4
             /*var windowRect = pictureBox1.ClientRectangle;*/
             var a = new Point(0, 0);          // left top
             var b = new Point(150, 0);         // right top
-            var c = new Point(150, 170);        // right bot
-            var d = new Point(0, 170);         // left bot
+            var c = new Point(150, 120);        // right bot
+            var d = new Point(0, 120);         // left bot
 
             var frame = new Rectangle(a, b, c, d);
             layeredImage.ChangeFrame(frame);
