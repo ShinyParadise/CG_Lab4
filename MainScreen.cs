@@ -20,7 +20,7 @@ namespace CG_Lab4
         private LineDrawer lineDrawer = new();
         private Filler filler = new(scaleFactor);
 
-        private string inputPath = "../../../triangles_color.txt";
+        private string inputPath = "../../../triangles.txt";
 
         public MainScreen()
         {
@@ -61,28 +61,34 @@ namespace CG_Lab4
                 for (int i = j + 1; i < layeredImage.Layers.Count; i++)
                 {
                     // it's better to do foreach or smth but there will be 1 figure anyway
-                    List<Point> insides = SutherlandHodgman.ClipPolygon(layeredImage.Layers[i].Figures[0].Points, layeredImage.Layers[j].Figures[0].Points);
-
-                    // каким-то образом надо проверить содержимое контейнера на совпадение с обрезающей фигурой
-                    int resLen = insides.Count;
-                    foreach (Point ins in insides)
+                    foreach (IFigure clip in layeredImage.Layers[j].Figures)
                     {
-                        if (layeredImage.Layers[j].Figures[0].Points.Contains(ins))
-                            resLen--;
-                        else break;
-
-                    }
-                    if ( resLen > 0)
-                    {
-                        foreach (Point ins in insides)
+                        foreach (IFigure fig in layeredImage.Layers[i].Figures)
                         {
-                            if (layeredImage.Layers[i].Figures[0].Points.Contains(ins))
+                            List<Point> insides = SutherlandHodgman.ClipPolygon(fig.Points, clip.Points);
+
+                            // каким-то образом надо проверить содержимое контейнера на совпадение с обрезающей фигурой
+                            int resLen = insides.Count;
+                            foreach (Point ins in insides)
                             {
-                                layeredImage.Layers[i].Figures[0].Points.Remove(ins);
+                                if (layeredImage.Layers[j].Figures[0].Points.Contains(ins))
+                                    resLen--;
+                                else break;
+
                             }
-                            else
+                            if (resLen > 0)
                             {
-                                layeredImage.Layers[i].Figures[0].Points.Add(ins);
+                                foreach (Point ins in insides)
+                                {
+                                    if (fig.Points.Contains(ins))
+                                    {
+                                        fig.Points.Remove(ins);
+                                    }
+                                    else
+                                    {
+                                        fig.Points.Add(ins);
+                                    }
+                                }
                             }
                         }
                     }
@@ -175,20 +181,28 @@ namespace CG_Lab4
                         if (line == null) return;
 
                         string[] numbersAsString = line.Split(' ', '\t', '\n', '\r');
-                        Color color = Color.FromName(numbersAsString[6]);
+                        Color color = Color.FromName(numbersAsString[7]);
 
                         if (int.TryParse(numbersAsString[0], out int x1) &&
                             int.TryParse(numbersAsString[1], out int y1) &&
                             int.TryParse(numbersAsString[2], out int x2) &&
                             int.TryParse(numbersAsString[3], out int y2) &&
                             int.TryParse(numbersAsString[4], out int x3) &&
-                            int.TryParse(numbersAsString[5], out int y3))
+                            int.TryParse(numbersAsString[5], out int y3) &&
+                            int.TryParse(numbersAsString[6], out int lay))
                         {
                             Triangle triangle = new(new Point(x1, y1), new Point(x2, y2), new Point(x3, y3));
-                            triangle.FillColor = color;
+                            triangle.FillColor = color;                         
                             triangles.Add(triangle);
-                            Layer layer = new(triangle);
-                            layeredImage.Add(layer);
+                            try
+                            {
+                                layeredImage.Layers[lay].Add(triangle);
+                            }
+                            catch (Exception ex)
+                            {
+                                Layer layer = new(triangle);
+                                layeredImage.Add(layer);
+                            }
                         }
                         else
                         {

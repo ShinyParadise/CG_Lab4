@@ -33,18 +33,30 @@ namespace CG_Lab4.Drawing
                     if (!IsInside(next.X, next.Y, x1, y1, x2, y2))
                     {
                         Point intersection = GetIntersection(current, next, x1, y1, x2, y2);
-                        clippedPolygon.Add(intersection);
+                        if (!clippedPolygon.Contains(intersection))
+                        {
+                            clippedPolygon.Add(intersection);
+                        }
                     }
                     else
                     {
-                        clippedPolygon.Add(next);
+                        if (!clippedPolygon.Contains(next))
+                        {
+                            clippedPolygon.Add(next);
+                        }
                     }
                 }
                 else if (IsInside(next.X, next.Y, x1, y1, x2, y2))
                 {
-                    clippedPolygon.Add(next);
                     Point intersection = GetIntersection(current, next, x1, y1, x2, y2);
-                    clippedPolygon.Add(intersection);
+                    if (!clippedPolygon.Contains(intersection))
+                    {
+                        clippedPolygon.Add(intersection);
+                    }
+                    if (!clippedPolygon.Contains(next))
+                    {
+                        clippedPolygon.Add(next);
+                    }
                 }
             }
 
@@ -58,6 +70,11 @@ namespace CG_Lab4.Drawing
 
         private static Point GetIntersection(Point p1, Point p2, int x1, int y1, int x2, int y2)
         {
+            /*if ((Math.Max(p1.X, p2.X) < Math.Min(x1, x2)) || (Math.Min(p1.X, p2.X) > Math.Max(x1, x2)))
+            { return new Point { X = p1.X, Y = p1.Y }; }
+            if ((Math.Max(p1.Y, p2.Y) < Math.Min(y1, y2)) || (Math.Min(p1.Y, p2.Y) > Math.Max(y1, y2)))
+            { return new Point { X = p1.X, Y = p1.Y }; }*/
+
             int den = (p1.X - p2.X) * (y1 - y2) - (p1.Y - p2.Y) * (x1 - x2);
             if (den == 0) { return new Point { X = p1.X, Y = p1.Y }; }
             int num_x = (p1.X * p2.Y - p1.Y * p2.X) * (x1 - x2) -
