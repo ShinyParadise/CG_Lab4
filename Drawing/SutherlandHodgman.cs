@@ -81,7 +81,9 @@ namespace CG_Lab4.Drawing
                 (p1.X - p2.X) * (x1 * y2 - y1 * x2);
             int num_y = (p1.X * p2.Y - p1.Y * p2.X) * (y1 - y2) -
                 (p1.Y - p2.Y) * (x1 * y2 - y1 * x2);
-            return new Point { X = num_x / den, Y = num_y / den };
+            double x = num_x / den;
+            double y = num_y / den;
+            return new Point { X = (int)Math.Round(x), Y = (int)Math.Round(y) };
         }
     }
 }

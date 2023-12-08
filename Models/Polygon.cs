@@ -7,6 +7,11 @@
             Points = points.ToList();
         }
 
+        public Polygon(List<Point> points)
+        {
+            Points = points;
+        }
+
         public List<Point> Points { get; set; }
         public Color FillColor { get; set; }
     }

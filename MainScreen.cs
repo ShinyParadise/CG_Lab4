@@ -66,35 +66,13 @@ namespace CG_Lab4
                         foreach (IFigure fig in layeredImage.Layers[i].Figures)
                         {
                             List<Point> insides = SutherlandHodgman.ClipPolygon(fig.Points, clip.Points);
-
-                            // каким-то образом надо проверить содержимое контейнера на совпадение с обрезающей фигурой
-                            int resLen = insides.Count;
-                            foreach (Point ins in insides)
-                            {
-                                if (layeredImage.Layers[j].Figures[0].Points.Contains(ins))
-                                    resLen--;
-                                else break;
-
-                            }
-                            if (resLen > 0)
-                            {
-                                foreach (Point ins in insides)
-                                {
-                                    if (fig.Points.Contains(ins))
-                                    {
-                                        fig.Points.Remove(ins);
-                                    }
-                                    else
-                                    {
-                                        fig.Points.Add(ins);
-                                    }
-                                }
-                            }
+                            layeredImage.Layers[i].Insides.Add(new Polygon(insides));
                         }
                     }
                 }
             }
         }
+
         private void ClipAllLayersToFrame()
         {
             for (int i = 1; i < layeredImage.Layers.Count; i++)
@@ -188,21 +166,13 @@ namespace CG_Lab4
                             int.TryParse(numbersAsString[2], out int x2) &&
                             int.TryParse(numbersAsString[3], out int y2) &&
                             int.TryParse(numbersAsString[4], out int x3) &&
-                            int.TryParse(numbersAsString[5], out int y3) &&
-                            int.TryParse(numbersAsString[6], out int lay))
+                            int.TryParse(numbersAsString[5], out int y3))
                         {
                             Triangle triangle = new(new Point(x1, y1), new Point(x2, y2), new Point(x3, y3));
-                            triangle.FillColor = color;                         
+                            triangle.FillColor = color;
                             triangles.Add(triangle);
-                            try
-                            {
-                                layeredImage.Layers[lay].Add(triangle);
-                            }
-                            catch (Exception ex)
-                            {
-                                Layer layer = new(triangle);
-                                layeredImage.Add(layer);
-                            }
+                            Layer layer = new(triangle);
+                            layeredImage.Add(layer);
                         }
                         else
                         {

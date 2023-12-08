@@ -19,6 +19,17 @@
             _figures.Remove(figure);
         }
 
+        public void AddInsides(params IFigure[] figures)
+        {
+            _insides.AddRange(figures);
+        }
+
+
+        public void AddNotFilled(params Point[] points)
+        {
+            _notFilled.AddRange(points);
+        }
+
         public IFigure this[int index]
         {
             get => _figures[index];
@@ -27,7 +38,10 @@
 
 
         private List<IFigure> _figures = new(1);
-
+        private List<IFigure> _insides = new(1);
+        private List<Point> _notFilled = new(1);
         public List<IFigure> Figures { get => _figures; set => _figures = value; }
+        public List<IFigure> Insides { get => _insides; set => _insides = value; }
+        public List<Point> NotFilled { get => _notFilled; set => _notFilled = value; }
     }
 }
