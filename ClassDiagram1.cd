@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="CG_Lab4.Drawing.CohenSutherland">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIAgAAABEAAAAAAAAAAAAgAAACAAAAAQA=</HashCode>
+      <FileName>Drawing\CohenSutherland.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CG_Lab4.Drawing.Filler">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAgQAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Drawing\Filler.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CG_Lab4.Drawing.LineDrawer">
+    <Position X="0.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAA=</HashCode>
+      <FileName>Drawing\LineDrawer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CG_Lab4.Drawing.WeilerAtherton">
+    <Position X="2.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAACAIAAAAAAAAAAEAAQEAAAAAAAAAAIAAAAAA=</HashCode>
+      <FileName>Drawing\WeilerAtherton.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CG_Lab4.Models.Layer">
+    <Position X="6.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAIAAAAAAAAAAAAACAACBACAAAAAAAAAIAAAAAAAAAA=</HashCode>
+      <FileName>Models\Layer.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="_figures" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="CG_Lab4.Models.LayeredImage">
+    <Position X="9.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAQIAAAAAAAAAAABAAAAAAgAAAEAAAAAAAAEAE=</HashCode>
+      <FileName>Models\LayeredImage.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="_layers" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="CG_Lab4.Models.Edge">
+    <Position X="5.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Point.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="End" />
+      <Property Name="Start" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="CG_Lab4.Models.Polygon" BaseTypeListCollapsed="true">
+    <Position X="7.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAgAAAAAAAAAAAAAAAAAAAAAgAAAA=</HashCode>
+      <FileName>Models\Polygon.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CG_Lab4.Models.Rectangle" BaseTypeListCollapsed="true">
+    <Position X="9.75" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAAgAAQAAAAAAAIAAAACACApAkAAAA=</HashCode>
+      <FileName>Models\Rectangle.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Struct Name="CG_Lab4.Models.Point" BaseTypeListCollapsed="true">
+    <Position X="7.75" Y="0.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAA4AUAAAAAAAAAAIAAAAAAAAAAYAA=</HashCode>
+      <FileName>Models\Point.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Struct>
+  <Interface Name="CG_Lab4.Models.IFigure">
+    <Position X="5.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAgAAAAAAAAACAIAAAABAEAAAAAAgAAAA=</HashCode>
+      <FileName>Models\IFigure.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Edges" />
+    </ShowAsCollectionAssociation>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
