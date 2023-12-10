@@ -8,7 +8,7 @@
         public Point(int X, int Y, Color? color = null)
         {
             color ??= Color.Black;
-            this.Color = (Color)color;
+            Color = (Color)color;
             this.X = X;
             this.Y = Y;
         }
@@ -43,6 +43,16 @@
         public override int GetHashCode()
         {
             return HashCode.Combine(X, Y);
+        }
+
+        public static bool operator ==(Point left, Point right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(Point left, Point right)
+        {
+            return !(left == right);
         }
     }
 
