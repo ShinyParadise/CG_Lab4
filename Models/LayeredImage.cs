@@ -21,10 +21,11 @@
 
         public void ClipAllLayers()
         {
-            for (int i = Layers.Count - 1; i >= 1; i--)
+            // сверху вниз по слоям
+            for (int i = 0; i < Layers.Count - 1; i++)
             {
                 Layer layer = Layers[i];
-                layer.ClipToLayer(Layers[i - 1]);
+                layer.ClipToLayer(Layers[i + 1]);
             }
         }
 

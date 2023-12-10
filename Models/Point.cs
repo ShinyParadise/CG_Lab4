@@ -4,7 +4,6 @@
     {
         public int X;
         public int Y;
-        public bool isVisible = true;
 
         public Point(int X, int Y)
         {
@@ -37,6 +36,23 @@
         public override readonly bool Equals(object? obj)
         {
             return obj is Point point && Equals(point);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(X, Y);
+        }
+    }
+
+    public class Edge
+    {
+        public Point Start { get; }
+        public Point End { get; }
+
+        public Edge(Point start, Point end)
+        {
+            Start = start;
+            End = end;
         }
     }
 }

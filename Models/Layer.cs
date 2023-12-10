@@ -1,4 +1,6 @@
-﻿namespace CG_Lab4.Models
+﻿using CG_Lab4.Drawing;
+
+namespace CG_Lab4.Models
 {
     public class Layer
     {
@@ -30,14 +32,24 @@
 
         public void ClipToLayer(Layer layer)
         {
+            var toRemove = new List<IFigure>();
+            var toAdd = new List<IFigure>();
             for (int i = 0; i < _figures.Count; i++) 
             {
                 IFigure fig = _figures[i];
                 foreach (var otherLayerFig in layer.Figures) 
                 {
-                    fig.ClipAgainstPolygon(otherLayerFig.Points);
+                    var polygons = WeilerAtherton.Clip(fig, otherLayerFig);
+                    if (polygons.Count > 0)
+                    {
+                        toRemove.Add(fig);
+                        toAdd.AddRange(polygons);
+                    }
                 }
             }
+
+            toRemove.ForEach(fig => Remove(fig));
+            toAdd.ForEach(fig => Add(fig));
         }
 
         public IFigure this[int index]

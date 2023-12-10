@@ -1,6 +1,5 @@
 using CG_Lab4.Drawing;
 using CG_Lab4.Models;
-using CG_Lab4.Utils;
 using Point = CG_Lab4.Models.Point;
 using Rectangle = CG_Lab4.Models.Rectangle;
 using SystemRectangle = System.Drawing.Rectangle;
@@ -9,14 +8,14 @@ namespace CG_Lab4
 {
     public partial class MainScreen : Form
     {
-        private List<Triangle> triangles = new();
+        private List<IFigure> figures = new();
         private LayeredImage layeredImage = new();
 
         private Graphics graphics;
         private Bitmap bitmap;
         private Color bgColor = Color.LightGray;
 
-        private const int scaleFactor = 4;
+        private const int scaleFactor = 3;
         private LineDrawer lineDrawer = new();
         private Filler filler = new(scaleFactor);
 
@@ -38,7 +37,7 @@ namespace CG_Lab4
         private void DrawAll()
         {
             layeredImage.ClipAllLayersToFrame();
-            //layeredImage.ClipAllLayers();
+            layeredImage.ClipAllLayers();
             
             foreach (var layer in layeredImage.Layers)
             {
@@ -55,7 +54,7 @@ namespace CG_Lab4
 
         private void FillFigure(IFigure figure)
         {
-            var insidePoint = PolygonPointGenerator.GenerateRandomPointInsidePolygon(figure.Points);
+            var insidePoint = figure.GeneratePointInside();
             filler.FloodFill(ref bitmap, ref graphics, insidePoint, figure.FillColor, bgColor);
         }
 
@@ -64,8 +63,8 @@ namespace CG_Lab4
             /*var windowRect = pictureBox1.ClientRectangle;*/
             var a = new Point(0, 0);          // left top
             var b = new Point(150, 0);         // right top
-            var c = new Point(150, 120);        // right bot
-            var d = new Point(0, 120);         // left bot
+            var c = new Point(150, 200);        // right bot
+            var d = new Point(0, 200);         // left bot
 
             var frame = new Rectangle(a, b, c, d);
             layeredImage.ChangeFrame(frame);
@@ -130,10 +129,10 @@ namespace CG_Lab4
                             int.TryParse(numbersAsString[4], out int x3) &&
                             int.TryParse(numbersAsString[5], out int y3))
                         {
-                            Triangle triangle = new(new Point(x1, y1), new Point(x2, y2), new Point(x3, y3));
-                            triangle.FillColor = color;
-                            triangles.Add(triangle);
-                            Layer layer = new(triangle);
+                            Polygon polygon = new(new Point(x1, y1), new Point(x2, y2), new Point(x3, y3));
+                            polygon.FillColor = color;
+                            figures.Add(polygon);
+                            Layer layer = new(polygon);
                             layeredImage.Add(layer);
                         }
                         else
