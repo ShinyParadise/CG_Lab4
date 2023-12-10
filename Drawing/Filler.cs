@@ -15,8 +15,17 @@ namespace CG_Lab4.Drawing
         {
             List<Point> points = new List<Point>();
             Stack<Point> stack = new();
+            startPoint.Color = fillColor;
             stack.Push(startPoint);
-            
+
+            int BeginX = startPoint.X;
+            int BeginY = startPoint.Y;
+            int R, B, G;
+            int deltaR, deltaB, deltaG;
+            //int step = 1;
+            deltaR = 255 - fillColor.R;
+            deltaB = 255 - fillColor.B;
+            deltaG = 255 - fillColor.G;
             var brush = new SolidBrush(fillColor);
 
             while (stack.Count > 0)
@@ -32,12 +41,19 @@ namespace CG_Lab4.Drawing
 
                 if (!borders.Contains(currentPoint) && (!points.Contains(currentPoint)))
                 {
-                    points.Add(new Point(currentPoint.X, currentPoint.Y, fillColor));
+                    points.Add(currentPoint);
 
-                    var rightNeighbor = new Point(currentPoint.X + 1, currentPoint.Y);
-                    var leftNeighbor = new Point(currentPoint.X - 1, currentPoint.Y);
-                    var bottomNeighbor = new Point(currentPoint.X, currentPoint.Y + 1);
-                    var upperNeighbor = new Point(currentPoint.X, currentPoint.Y - 1);
+                    double deltaX = (x - BeginX) * (x - BeginX); double deltaY = (y - BeginY) * (y - BeginY);
+                    double distance = Math.Sqrt(deltaX + deltaY);
+                    R = (int)(fillColor.R + deltaR * distance / 5000) % 256;
+                    G = (int)(fillColor.G + deltaG * distance / 5000) % 256;
+                    B = (int)(fillColor.B + deltaB * distance / 5000) % 256;
+                    fillColor = Color.FromArgb(R, G, B);
+
+                    var rightNeighbor = new Point(currentPoint.X + 1, currentPoint.Y, fillColor);
+                    var leftNeighbor = new Point(currentPoint.X - 1, currentPoint.Y, fillColor);
+                    var bottomNeighbor = new Point(currentPoint.X, currentPoint.Y + 1, fillColor);
+                    var upperNeighbor = new Point(currentPoint.X, currentPoint.Y - 1, fillColor);
 
                     if (!stack.Contains(rightNeighbor))
                         stack.Push(rightNeighbor);
