@@ -9,7 +9,8 @@
 
         public List<Point> Points { get; set; }
         public Color FillColor { get; set; }
-
+        public List<Point> Borders { get; set; }
+        public List<Point> Insides { get; set; }
         public bool Equals(IFigure? other)
         {
             if (other == null) return false;

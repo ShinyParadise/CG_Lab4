@@ -38,9 +38,33 @@
             }
         }
 
+
+        public void AddDrawable(IFigure figure)
+        {
+            if (figure.Borders != null)
+            {
+                foreach (var point in figure.Borders)
+                {
+                    if (!Drawable.Contains(point))
+                    {
+                        Drawable.Add(point);
+                    }
+                }
+            }
+            if (figure.Insides != null)
+            {
+                foreach (var point in figure.Insides)
+                {
+                    if (!Drawable.Contains(point))
+                    {
+                        Drawable.Add(point);
+                    }
+                }
+            }
+        }
         public List<Layer> Layers { get => _layers.Skip(1).ToList(); }
         public Rectangle Frame { get => (Rectangle)_layers[0][0]; set => _layers[0][0] = value; }
-
+        public List<Point> Drawable { get; set; }
         private List<Layer> _layers = new(1);
     }
 }

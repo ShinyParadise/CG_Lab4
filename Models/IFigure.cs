@@ -6,7 +6,8 @@ namespace CG_Lab4.Models
     {
         public List<Point> Points { get; set; }
         public Color FillColor { get; set; }
-
+        public List<Point> Borders { get; set; }
+        public List<Point> Insides { get; set; }
         public List<Edge> Edges { get => CreateEdges(Points); }
 
         public void ClipToFrame(Rectangle clipRectangle)
@@ -36,38 +37,24 @@ namespace CG_Lab4.Models
 
         public Point GeneratePointInside()
         {
-            var random = new Random();
-
-            // Найти ограничивающий прямоугольник
-            int minX = int.MaxValue, minY = int.MaxValue, maxX = int.MinValue, maxY = int.MinValue;
-            foreach (Point point in Points)
-            {
-                minX = Math.Min(minX, point.X);
-                minY = Math.Min(minY, point.Y);
-                maxX = Math.Max(maxX, point.X);
-                maxY = Math.Max(maxY, point.Y);
-            }
-
-            // Генерировать случайные точки внутри ограничивающего прямоугольника
-            int x, y;
-            do
-            {
-                x = random.Next(minX, maxX + 1);
-                y = random.Next(minY, maxY + 1);
-            } while (!IsPointInPolygon(new Point(x, y), Points));
-
+            double lenA = Math.Sqrt((Points[0].X - Points[1].X) * (Points[0].X - Points[1].X) + (Points[0].Y - Points[1].Y) * (Points[0].Y - Points[1].Y));
+            double lenB = Math.Sqrt((Points[0].X - Points[2].X) * (Points[0].X - Points[2].X) + (Points[0].Y - Points[2].Y) * (Points[0].Y - Points[2].Y));
+            double lenC = Math.Sqrt((Points[1].X - Points[2].X) * (Points[1].X - Points[2].X) + (Points[1].Y - Points[2].Y) * (Points[1].Y - Points[2].Y));
+            double per = lenA + lenB + lenC;
+            int x = (int)((lenA * Points[0].X + lenB * Points[1].X + lenC * Points[2].X) / per);
+            int y = (int)((lenA * Points[0].Y + lenB * Points[1].Y + lenC * Points[2].Y) / per);
             return new Point(x, y);
         }
 
-        public static bool IsPointInPolygon(Point point, List<Point> polygon)
+        public static bool IsPointInPoints(Point point, List<Point> Points)
         {
             int crossings = 0;
 
-            for (int i = 0; i < polygon.Count; i++)
+            for (int i = 0; i < Points.Count; i++)
             {
-                int j = (i + 1) % polygon.Count;
-                if (((polygon[i].Y <= point.Y && point.Y < polygon[j].Y) || (polygon[j].Y <= point.Y && point.Y < polygon[i].Y)) &&
-                    (point.X < (polygon[j].X - polygon[i].X) * (point.Y - polygon[i].Y) / (polygon[j].Y - polygon[i].Y) + polygon[i].X))
+                int j = (i + 1) % Points.Count;
+                if (((Points[i].Y <= point.Y && point.Y < Points[j].Y) || (Points[j].Y <= point.Y && point.Y < Points[i].Y)) &&
+                    (point.X < (Points[j].X - Points[i].X) * (point.Y - Points[i].Y) / (Points[j].Y - Points[i].Y) + Points[i].X))
                 {
                     crossings++;
                 }
