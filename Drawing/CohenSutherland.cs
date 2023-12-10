@@ -7,87 +7,86 @@ namespace CG_Lab4.Drawing
     public class CohenSutherland
     {
         // Коды для каждого положения точки относительно окна
-        private const int INSIDE = 0; // 0000
         private const int LEFT = 1;   // 0001
         private const int RIGHT = 2;  // 0010
         private const int BOTTOM = 4; // 0100
         private const int TOP = 8;    // 1000
 
-        private static int ComputeOutCode(Rectangle clipRectangle, Point p)
+        private static int ClipCode(Point point, Rectangle clipRectangle)
         {
-            int code = INSIDE;
+            int code = 0;
 
-            if (p.X < clipRectangle.Left)
+            if (point.X < clipRectangle.Left)
                 code |= LEFT;
-            else if (p.X > clipRectangle.Right)
+            else if (point.X > clipRectangle.Right)
                 code |= RIGHT;
 
-            if (p.Y < clipRectangle.Top)
-                code |= TOP;
-            else if (p.Y > clipRectangle.Bottom)
+            if (point.Y < clipRectangle.Top)
                 code |= BOTTOM;
+            else if (point.Y > clipRectangle.Bottom)
+                code |= TOP;
 
             return code;
         }
 
-        // Отсечение отрезка прямоугольным окном
-        public static bool ClipLine(Rectangle clipRectangle, ref Point p1, ref Point p2)
+        public static (Point?, Point?) ClipLine(Rectangle clipRectangle, Point p1, Point p2)
         {
-            int outcode1 = ComputeOutCode(clipRectangle, p1);
-            int outcode2 = ComputeOutCode(clipRectangle, p2);
-            bool accept = false;
+            Point? startP = null;
+            Point? endP = null;
 
-            while (true)
+            int code0 = ClipCode(p1, clipRectangle);
+            int code1 = ClipCode(p2, clipRectangle);
+
+            while ((code0 | code1) != 0)
             {
-                if ((outcode1 | outcode2) == 0)
+                if ((code0 & code1) != 0)
                 {
-                    accept = true;
-                    break;
+                    return (startP, endP);
                 }
-                else if ((outcode1 & outcode2) != 0)
+
+                int x = 0, y = 0;
+
+                int codeOut = (code0 != 0) ? code0 : code1;
+
+                if ((codeOut & TOP) != 0)
                 {
-                    break;
+                    x = p1.X + (p2.X - p1.X) * (clipRectangle.Bottom - p1.Y) / (p2.Y - p1.Y);
+                    y = clipRectangle.Bottom;
+                }
+                else if ((codeOut & BOTTOM) != 0)
+                {
+                    x = p1.X + (p2.X - p1.X) * (clipRectangle.Top - p1.Y) / (p2.Y - p1.Y);
+                    y = clipRectangle.Top;
+                }
+                else if ((codeOut & RIGHT) != 0)
+                {
+                    y = p1.Y + (p2.Y - p1.Y) * (clipRectangle.Right - p1.X) / (p2.X - p1.X);
+                    x = clipRectangle.Right;
+                }
+                else if ((codeOut & LEFT) != 0)
+                {
+                    y = p1.Y + (p2.Y - p1.Y) * (clipRectangle.Left - p1.X) / (p2.X - p1.X);
+                    x = clipRectangle.Left;
+                }
+
+                if (codeOut == code0)
+                {
+                    p1.X = x;
+                    p1.Y = y;
+                    code0 = ClipCode(p1, clipRectangle);
                 }
                 else
                 {
-                    int x, y;
-                    int outcodeOut = (outcode1 != 0) ? outcode1 : outcode2;
-
-                    if ((outcodeOut & TOP) != 0)
-                    {
-                        x = p1.X + (p2.X - p1.X) * (clipRectangle.Top - p1.Y) / (p2.Y - p1.Y);
-                        y = clipRectangle.Top;
-                    }
-                    else if ((outcodeOut & BOTTOM) != 0)
-                    {
-                        x = p1.X + (p2.X - p1.X) * (clipRectangle.Bottom - p1.Y) / (p2.Y - p1.Y);
-                        y = clipRectangle.Bottom;
-                    }
-                    else if ((outcodeOut & RIGHT) != 0)
-                    {
-                        y = p1.Y + (p2.Y - p1.Y) * (clipRectangle.Right - p1.X) / (p2.X - p1.X);
-                        x = clipRectangle.Right;
-                    }
-                    else
-                    {
-                        y = p1.Y + (p2.Y - p1.Y) * (clipRectangle.Left - p1.X) / (p2.X - p1.X);
-                        x = clipRectangle.Left;
-                    }
-
-                    if (outcodeOut == outcode1)
-                    {
-                        p1 = new Point(x, y);
-                        outcode1 = ComputeOutCode(clipRectangle, p1);
-                    }
-                    else
-                    {
-                        p2 = new Point(x, y);
-                        outcode2 = ComputeOutCode(clipRectangle, p2);
-                    }
+                    p2.X = x;
+                    p2.Y = y;
+                    code1 = ClipCode(p2, clipRectangle);
                 }
             }
 
-            return accept;
+            startP = p1;
+            endP = p2;
+
+            return (startP, endP);
         }
     }
 }

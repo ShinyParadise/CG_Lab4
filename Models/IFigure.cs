@@ -19,24 +19,28 @@ namespace CG_Lab4.Models
                 Point p1 = Points[i];
                 Point p2 = Points[(i + 1) % Points.Count];
 
-                if (CohenSutherland.ClipLine(clipRectangle, ref p1, ref p2))
+                var (startP, endP) = CohenSutherland.ClipLine(clipRectangle, p1, p2);
+
+                if (startP !=  null) { p1 = (Point)startP; }
+                if (endP !=  null) { p2 = (Point)endP; }
+
+                if (!clippedPoints.Contains(p1) && startP != null)
                 {
-                    if (!clippedPoints.Contains(p1))
-                    {
-                        clippedPoints.Add(p1);
-                    }
-                    if (!clippedPoints.Contains(p2))
-                    {
-                        clippedPoints.Add(p2);
-                    }
+                    clippedPoints.Add(p1);
+                }
+                if (!clippedPoints.Contains(p2) && endP != null)
+                {
+                    clippedPoints.Add(p2);
                 }
             }
 
             Points = clippedPoints;
         }
 
-        public Point GeneratePointInside()
+        public Point? GeneratePointInside()
         {
+            if (Points.Count < 3) { return null; }
+
             double lenA = Math.Sqrt((Points[0].X - Points[1].X) * (Points[0].X - Points[1].X) + (Points[0].Y - Points[1].Y) * (Points[0].Y - Points[1].Y));
             double lenB = Math.Sqrt((Points[0].X - Points[2].X) * (Points[0].X - Points[2].X) + (Points[0].Y - Points[2].Y) * (Points[0].Y - Points[2].Y));
             double lenC = Math.Sqrt((Points[1].X - Points[2].X) * (Points[1].X - Points[2].X) + (Points[1].Y - Points[2].Y) * (Points[1].Y - Points[2].Y));

@@ -63,7 +63,14 @@ namespace CG_Lab4
         private List<Point> FillFigure(IFigure figure)
         {
             var insidePoint = figure.GeneratePointInside();
-            return filler.FloodFill(figure.Borders, insidePoint, figure.FillColor);
+            if (insidePoint != null)
+            {
+                return filler.FloodFill(figure.Borders, (Point)insidePoint, figure.FillColor);
+            }
+            else
+            {
+                return new();
+            }
         }
 
         private void DrawFrame()
@@ -71,8 +78,8 @@ namespace CG_Lab4
             /*var windowRect = pictureBox1.ClientRectangle;*/
             var a = new Point(0, 0);          // left top
             var b = new Point(150, 0);         // right top
-            var c = new Point(150, 200);        // right bot
-            var d = new Point(0, 200);         // left bot
+            var c = new Point(150, 150);        // right bot
+            var d = new Point(0, 150);         // left bot
 
             var frame = new Rectangle(a, b, c, d);
             layeredImage.ChangeFrame(frame);
