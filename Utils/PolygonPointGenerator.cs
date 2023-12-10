@@ -5,11 +5,21 @@ namespace CG_Lab4.Utils
 {
     class PolygonPointGenerator
     {
-        private PolygonPointGenerator() {}
+        private PolygonPointGenerator() { }
 
         public static Point GenerateRandomPointInsidePolygon(List<Point> polygon)
         {
-            var triangles = TriangulatePolygon(polygon);
+            // вернет центр вписанной окружности
+            double lenA = Math.Sqrt((polygon[0].X - polygon[1].X) * (polygon[0].X - polygon[1].X) + (polygon[0].Y - polygon[1].Y) * (polygon[0].Y - polygon[1].Y));
+            double lenB = Math.Sqrt((polygon[0].X - polygon[2].X) * (polygon[0].X - polygon[2].X) + (polygon[0].Y - polygon[2].Y) * (polygon[0].Y - polygon[2].Y));
+            double lenC = Math.Sqrt((polygon[1].X - polygon[2].X) * (polygon[1].X - polygon[2].X) + (polygon[1].Y - polygon[2].Y) * (polygon[1].Y - polygon[2].Y));
+            double per = lenA + lenB + lenC;
+            int x = (int)((lenA * polygon[0].X + lenB * polygon[1].X + lenC * polygon[2].X) / per);
+            int y = (int)((lenA * polygon[0].Y + lenB * polygon[1].Y + lenC * polygon[2].Y) / per);
+            return new Point(x, y);
+        }
+    }
+    /*var triangles = TriangulatePolygon(polygon);
             double totalArea = triangles.Sum(t => t.Area);
             double randomArea = RandomDouble() * totalArea;
 
@@ -59,6 +69,6 @@ namespace CG_Lab4.Utils
             Random random = new();
             return random.NextDouble();
         }
-    }
+    }*/
 
-}
+        }

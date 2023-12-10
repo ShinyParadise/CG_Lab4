@@ -47,7 +47,14 @@ namespace CG_Lab4
                     if (fig.Points.Count != 0)
                     {
                         DrawFigure(fig);
-                        //FillFigure(fig);
+                        FillFigure(fig);        
+                    }
+                }
+                foreach (var fig in layer.Insides)
+                {
+                    if (fig.Points.Count != 0)
+                    {
+                        FillFigure(fig);
                     }
                 }
             }
@@ -66,7 +73,10 @@ namespace CG_Lab4
                         foreach (IFigure fig in layeredImage.Layers[i].Figures)
                         {
                             List<Point> insides = SutherlandHodgman.ClipPolygon(fig.Points, clip.Points);
-                            layeredImage.Layers[i].Insides.Add(new Polygon(insides));
+                            if (insides.Count > 2)
+                            {
+                                layeredImage.Layers[i].Insides.Add(new Polygon(insides, clip.FillColor));
+                            }
                         }
                     }
                 }
@@ -106,6 +116,7 @@ namespace CG_Lab4
             var d = new Point(00, 170);      // left bot
 
             var frame = new Rectangle(a, b, c, d);
+            frame.FillColor = bgColor;
             layeredImage.ChangeFrame(frame);
 
             var points = layeredImage.Frame.Points;
@@ -166,13 +177,21 @@ namespace CG_Lab4
                             int.TryParse(numbersAsString[2], out int x2) &&
                             int.TryParse(numbersAsString[3], out int y2) &&
                             int.TryParse(numbersAsString[4], out int x3) &&
-                            int.TryParse(numbersAsString[5], out int y3))
+                            int.TryParse(numbersAsString[5], out int y3) &&
+                            int.TryParse(numbersAsString[6], out int lay))
                         {
                             Triangle triangle = new(new Point(x1, y1), new Point(x2, y2), new Point(x3, y3));
                             triangle.FillColor = color;
                             triangles.Add(triangle);
-                            Layer layer = new(triangle);
-                            layeredImage.Add(layer);
+                            try
+                            {
+                                layeredImage.Layers[lay].Add(triangle);
+                            }
+                            catch (Exception ex)
+                            {
+                                Layer layer = new(triangle);
+                                layeredImage.Add(layer);
+                            }
                         }
                         else
                         {

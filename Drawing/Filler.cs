@@ -13,6 +13,7 @@ namespace CG_Lab4.Drawing
 
         public void FloodFill(ref Bitmap image, ref Graphics graphics, Point startPoint, Color fillColor, Color oldColor)
         {
+            if (fillColor == oldColor) return;
             Stack<Point> stack = new();
             stack.Push(startPoint);
             
