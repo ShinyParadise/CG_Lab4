@@ -37,7 +37,7 @@ namespace CG_Lab4
         private void DrawAll()
         {
             layeredImage.ClipAllLayersToFrame();
-            layeredImage.ClipAllLayers();
+            //layeredImage.ClipAllLayers();
             
             foreach (var layer in layeredImage.Layers)
             {
