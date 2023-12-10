@@ -11,8 +11,9 @@ namespace CG_Lab4.Drawing
             _scaleFactor = scaleFactor;
         }
 
-        public void FloodFill(ref Bitmap image, ref Graphics graphics, Point startPoint, Color fillColor, Color oldColor)
+        public List<Point> FloodFill(List<Point> borders, Point startPoint, Color fillColor)
         {
+            List<Point> points = new List<Point>();
             Stack<Point> stack = new();
             stack.Push(startPoint);
             
@@ -21,20 +22,17 @@ namespace CG_Lab4.Drawing
             while (stack.Count > 0)
             {
                 Point currentPoint = stack.Pop();
+                int x = currentPoint.X;
+                int y = currentPoint.Y;
 
-                int x = (currentPoint.X * _scaleFactor);
-                int y = (currentPoint.Y * _scaleFactor);
-
-                if (x < 0 || x >= image.Width || y < 0 || y >= image.Height)
+                if (x < 0 || y < 0 )
                 {
                     continue; // Пропускаем, если координаты за границами изображения
                 }
 
-                var currentColor = image.GetPixel(x, y);
-
-                if (currentColor.ToArgb() == oldColor.ToArgb())
+                if (!borders.Contains(currentPoint) && (!points.Contains(currentPoint)))
                 {
-                    graphics.FillRectangle(brush, x, y, _scaleFactor, _scaleFactor);
+                    points.Add(new Point(currentPoint.X, currentPoint.Y, fillColor));
 
                     var rightNeighbor = new Point(currentPoint.X + 1, currentPoint.Y);
                     var leftNeighbor = new Point(currentPoint.X - 1, currentPoint.Y);
@@ -54,6 +52,7 @@ namespace CG_Lab4.Drawing
                         stack.Push(upperNeighbor);
                 }
             }
+            return points;
         }
     }
 }

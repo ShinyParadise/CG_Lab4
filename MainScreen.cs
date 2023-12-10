@@ -1,5 +1,6 @@
 using CG_Lab4.Drawing;
 using CG_Lab4.Models;
+using System.Drawing;
 using Point = CG_Lab4.Models.Point;
 using Rectangle = CG_Lab4.Models.Rectangle;
 using SystemRectangle = System.Drawing.Rectangle;
@@ -13,7 +14,8 @@ namespace CG_Lab4
 
         private Graphics graphics;
         private Bitmap bitmap;
-        private Color bgColor = Color.LightGray;
+        private Color bgColor = Color.White;
+        private Color borderColor = Color.Black;
 
         private const int scaleFactor = 3;
         private LineDrawer lineDrawer = new();
@@ -45,17 +47,23 @@ namespace CG_Lab4
                 {
                     if (fig.Points.Count != 0)
                     {
-                        DrawFigure(fig);
-                        //FillFigure(fig);
+                        fig.Borders = DrawPoints(fig.Points);
+                        fig.Insides = FillFigure(fig);
+                        layeredImage.AddDrawable(fig);
                     }
                 }
             }
+            foreach (var p in layeredImage.Drawable)
+            {
+                Brush brush = new SolidBrush(p.Color);
+                graphics.FillRectangle(brush, p.X * scaleFactor, p.Y * scaleFactor, scaleFactor, scaleFactor);
+            }
         }
 
-        private void FillFigure(IFigure figure)
+        private List<Point> FillFigure(IFigure figure)
         {
             var insidePoint = figure.GeneratePointInside();
-            filler.FloodFill(ref bitmap, ref graphics, insidePoint, figure.FillColor, bgColor);
+            return filler.FloodFill(figure.Borders, insidePoint, figure.FillColor);
         }
 
         private void DrawFrame()
@@ -70,19 +78,12 @@ namespace CG_Lab4
             layeredImage.ChangeFrame(frame);
 
             var points = layeredImage.Frame.Points;
-            DrawPoints(points, new SolidBrush(Color.Tan));
-        }
-        
-        private void DrawFigure(IFigure f)
-        {
-            var brush = new SolidBrush(Color.Black);
-            DrawPoints(f.Points, brush);
+            layeredImage.Drawable = DrawPoints(points, Color.Tan);
         }
 
-        private void DrawPoints(List<Point> points, SolidBrush? brush = null)
+        private List<Point> DrawPoints(List<Point> points, Color? color = null)
         {
-            brush ??= new SolidBrush(Color.Black);
-
+            color ??= borderColor;
             var linesPoints = new List<Point>();
             
             for(int i = 0; i < points.Count - 1; i++)
@@ -93,10 +94,7 @@ namespace CG_Lab4
             var lastLine = lineDrawer.DrawLine(points.Last(), points.First());
             linesPoints.AddRange(lastLine);
 
-            foreach (var point in linesPoints)
-            {
-                graphics.FillRectangle(brush, point.X * scaleFactor, point.Y * scaleFactor, scaleFactor, scaleFactor);
-            }
+            return linesPoints;
         }
 
         private void InitCanvas()

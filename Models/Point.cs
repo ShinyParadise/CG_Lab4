@@ -4,9 +4,11 @@
     {
         public int X;
         public int Y;
-
-        public Point(int X, int Y)
+        public Color Color;
+        public Point(int X, int Y, Color? color = null)
         {
+            color ??= Color.Black;
+            this.Color = (Color)color;
             this.X = X;
             this.Y = Y;
         }
