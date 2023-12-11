@@ -12,22 +12,6 @@ namespace CG_Lab4.Drawing
         private const int BOTTOM = 4; // 0100
         private const int TOP = 8;    // 1000
 
-        private static int ClipCode(Point point, Rectangle clipRectangle)
-        {
-            int code = 0;
-
-            if (point.X < clipRectangle.Left)
-                code |= LEFT;
-            else if (point.X > clipRectangle.Right)
-                code |= RIGHT;
-
-            if (point.Y < clipRectangle.Top)
-                code |= BOTTOM;
-            else if (point.Y > clipRectangle.Bottom)
-                code |= TOP;
-
-            return code;
-        }
 
         public static (Point?, Point?) ClipLine(Rectangle clipRectangle, Point p1, Point p2)
         {
@@ -87,6 +71,23 @@ namespace CG_Lab4.Drawing
             endP = p2;
 
             return (startP, endP);
+        }
+
+        private static int ClipCode(Point point, Rectangle clipRectangle)
+        {
+            int code = 0;
+
+            if (point.X < clipRectangle.Left)
+                code |= LEFT;
+            else if (point.X > clipRectangle.Right)
+                code |= RIGHT;
+
+            if (point.Y < clipRectangle.Top)
+                code |= BOTTOM;
+            else if (point.Y > clipRectangle.Bottom)
+                code |= TOP;
+
+            return code;
         }
     }
 }

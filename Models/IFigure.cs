@@ -20,6 +20,7 @@ namespace CG_Lab4.Models
                 Point p2 = Points[(i + 1) % Points.Count];
 
                 var (startP, endP) = CohenSutherland.ClipLine(clipRectangle, p1, p2);
+                //var (startP, endP) = LSSB.Clip(p1, p2, clipRectangle);
 
                 if (startP !=  null) { p1 = (Point)startP; }
                 if (endP !=  null) { p2 = (Point)endP; }
@@ -50,15 +51,15 @@ namespace CG_Lab4.Models
             return new Point(x, y);
         }
 
-        public static bool IsPointInPoints(Point point, List<Point> Points)
+        public static bool IsPointInPolygon(Point point, List<Point> polygon)
         {
             int crossings = 0;
 
-            for (int i = 0; i < Points.Count; i++)
+            for (int i = 0; i < polygon.Count; i++)
             {
-                int j = (i + 1) % Points.Count;
-                if (((Points[i].Y <= point.Y && point.Y < Points[j].Y) || (Points[j].Y <= point.Y && point.Y < Points[i].Y)) &&
-                    (point.X < (Points[j].X - Points[i].X) * (point.Y - Points[i].Y) / (Points[j].Y - Points[i].Y) + Points[i].X))
+                int j = (i + 1) % polygon.Count;
+                if (((polygon[i].Y <= point.Y && point.Y < polygon[j].Y) || (polygon[j].Y <= point.Y && point.Y < polygon[i].Y)) &&
+                    (point.X < (polygon[j].X - polygon[i].X) * (point.Y - polygon[i].Y) / (polygon[j].Y - polygon[i].Y) + polygon[i].X))
                 {
                     crossings++;
                 }
