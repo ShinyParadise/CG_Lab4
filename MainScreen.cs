@@ -28,11 +28,11 @@ namespace CG_Lab4
         {
             InitializeComponent();
 
+            InitTriangles();
+
             InitCanvas();
 
             DrawFrame();
-
-            InitTriangles();
 
             DrawAll();
         }
@@ -116,41 +116,7 @@ namespace CG_Lab4
 
         private void InitTriangles()
         {
-            try
-            {
-                using StreamReader sr = new(inputPath);
-                while (!sr.EndOfStream)
-                {
-                    string line = sr.ReadLine();
-                    if (line == null) return;
-
-                    string[] numbersAsString = line.Split(' ', '\t', '\n', '\r');
-                    Color color = Color.FromName(numbersAsString[6]);
-
-                    if (int.TryParse(numbersAsString[0], out int x1) &&
-                        int.TryParse(numbersAsString[1], out int y1) &&
-                        int.TryParse(numbersAsString[2], out int x2) &&
-                        int.TryParse(numbersAsString[3], out int y2) &&
-                        int.TryParse(numbersAsString[4], out int x3) &&
-                        int.TryParse(numbersAsString[5], out int y3))
-                    {
-                        Polygon polygon = new(new Point(x1, y1), new Point(x2, y2), new Point(x3, y3))
-                        {
-                            FillColor = color
-                        };
-                        Layer layer = new(polygon);
-                        layeredImage.Add(layer);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Неверный формат данных в файле");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Ошибка при чтении файла: {ex.Message}");
-            }
+            layeredImage.LoadImage(inputPath);
         }
 
         private void textBox2_TextChanged(object sender, EventArgs e)
@@ -165,10 +131,33 @@ namespace CG_Lab4
 
         private void button1_Click(object sender, EventArgs e)
         {
-            layeredImage.Layers[selectedLayer].Rotate(angle);
             InitCanvas();
 
+            layeredImage.Rotate(selectedLayer, angle);
+
             DrawAll();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            using SaveFileDialog saveFileDialog = new() { Filter = @"text|*.txt" };
+
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                layeredImage.SaveImage(saveFileDialog.FileName);
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            using OpenFileDialog openFileDialog = new() { Filter = @"text|*.txt" };
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                InitCanvas();
+                layeredImage.LoadImage(openFileDialog.FileName);
+                DrawAll();
+            }
         }
     }
 }

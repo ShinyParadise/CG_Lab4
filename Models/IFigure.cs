@@ -63,7 +63,9 @@ namespace CG_Lab4.Models
             double lenA = Math.Sqrt((Points[0].X - Points[1].X) * (Points[0].X - Points[1].X) + (Points[0].Y - Points[1].Y) * (Points[0].Y - Points[1].Y));
             double lenB = Math.Sqrt((Points[0].X - Points[2].X) * (Points[0].X - Points[2].X) + (Points[0].Y - Points[2].Y) * (Points[0].Y - Points[2].Y));
             double lenC = Math.Sqrt((Points[1].X - Points[2].X) * (Points[1].X - Points[2].X) + (Points[1].Y - Points[2].Y) * (Points[1].Y - Points[2].Y));
+
             double per = lenA + lenB + lenC;
+
             int x = (int)((lenA * Points[0].X + lenB * Points[1].X + lenC * Points[2].X) / per);
             int y = (int)((lenA * Points[0].Y + lenB * Points[1].Y + lenC * Points[2].Y) / per);
             return new Point(x, y);
@@ -113,6 +115,22 @@ namespace CG_Lab4.Models
             int centerY = totalY / Points.Count;
 
             return new Point(centerX, centerY);
+        }
+
+        public bool WriteToFile(StreamWriter sw)
+        {
+            if (Points.Count < 3) return false;
+
+            foreach (var point in Points)
+            {
+                sw.Write(point.X.ToString());
+                sw.Write(" ");
+                sw.Write(point.Y.ToString());
+                sw.Write(" ");
+            }
+
+            sw.Write(FillColor.Name);
+            return true;
         }
     }
 }

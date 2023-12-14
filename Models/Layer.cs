@@ -66,6 +66,17 @@ namespace CG_Lab4.Models
             set => _figures[index] = value;
         }
 
+        public void WriteToFile(StreamWriter sw)
+        {
+            foreach (var figure in Figures)
+            {
+                if (figure.WriteToFile(sw))
+                {
+                    sw.Write('\n');
+                }
+            }
+        }
+
 
         private List<IFigure> _figures = new(1);
 
