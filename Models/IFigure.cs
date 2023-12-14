@@ -10,6 +10,24 @@ namespace CG_Lab4.Models
         public List<Point> Insides { get; set; }
         public List<Edge> Edges { get => CreateEdges(Points); }
 
+        public void Rotate(double angle)
+        {
+            var center = FindCenter();
+            float angleRadians = (float)(angle * Math.PI / 180.0);
+
+            for (int i = 0; i < Points.Count; i++)
+            {
+                int x = Points[i].X - center.X;
+                int y = Points[i].Y - center.Y;
+
+                // Формула поворота для точки (x, y) относительно центра (0, 0)
+                Points[i] = new Point(
+                    (int)(x * Math.Cos(angleRadians) - y * Math.Sin(angleRadians)) + center.X,
+                    (int)(x * Math.Sin(angleRadians) + y * Math.Cos(angleRadians)) + center.Y
+                );
+            }
+        }
+
         public void ClipToFrame(Rectangle clipRectangle)
         {
             List<Point> clippedPoints = new();
@@ -79,6 +97,22 @@ namespace CG_Lab4.Models
             edges.Add(new Edge(vertices.Last(), vertices.First()));
 
             return edges;
+        }
+
+        protected Point FindCenter()
+        {
+            int totalX = 0, totalY = 0;
+
+            foreach (Point point in Points)
+            {
+                totalX += point.X;
+                totalY += point.Y;
+            }
+
+            int centerX = totalX / Points.Count;
+            int centerY = totalY / Points.Count;
+
+            return new Point(centerX, centerY);
         }
     }
 }

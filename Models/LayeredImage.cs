@@ -62,9 +62,10 @@
                 }
             }
         }
+
         public List<Layer> Layers { get => _layers.Skip(1).ToList(); }
         public Rectangle Frame { get => (Rectangle)_layers[0][0]; set => _layers[0][0] = value; }
-        public List<Point> Drawable { get; set; }
+        public List<Point> Drawable { get; set; } = new();
         private List<Layer> _layers = new(1);
     }
 }

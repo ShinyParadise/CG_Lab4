@@ -21,6 +21,14 @@ namespace CG_Lab4.Models
             _figures.Remove(figure);
         }
 
+        public void Rotate(double angle)
+        {
+            foreach (var figure in _figures)
+            {
+                figure.Rotate(angle);
+            }
+        }
+
         public void ClipToFrame(Rectangle frame)
         {
             for (int i = 0; i < Figures.Count; i++)

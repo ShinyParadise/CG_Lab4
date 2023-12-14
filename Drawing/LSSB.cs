@@ -25,13 +25,11 @@ namespace CG_Lab4.Drawing
 
             if ((c1 & c2) != 0)
             {
-                // The line segment is outside
                 return (null, null);
             }
 
             if ((c1 | c2) == 0)
             {
-                // The line segment is inside of the clipping rectangle
                 return (p1, p2);
             }
 
@@ -77,7 +75,7 @@ namespace CG_Lab4.Drawing
                                 p1.Y = clipRect.Top;
                                 break;
                             default:
-                                return (null, null); // the line segment is outside
+                                return (null, null);
                         }
                     }
                     else
@@ -116,7 +114,7 @@ namespace CG_Lab4.Drawing
                             p1.Y = (clipRect.Left - p2.X) * k + p2.Y;
                             if (p1.Y < clipRect.Top)
                             {
-                                return (null, null); // the line segment is outside
+                                return (null, null);
                             }
                             p2.Y = (clipRect.Right - clipRect.Left) * k + p1.Y;
                             if (p2.Y < clipRect.Top)
@@ -129,8 +127,6 @@ namespace CG_Lab4.Drawing
                                 p2.X = clipRect.Right;
                             }
                             break;
-
-                        // Аналогично для случаев c1 = 2, 5, 6
 
                         default:
                             break;
@@ -206,8 +202,6 @@ namespace CG_Lab4.Drawing
                         }
                     }
                     break;
-
-                // Add other cases as in the pseudocode
 
                 default:
                     break;
