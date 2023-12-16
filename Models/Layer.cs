@@ -21,6 +21,14 @@ namespace CG_Lab4.Models
             _figures.Remove(figure);
         }
 
+        public void Rotate(double angle)
+        {
+            foreach (var figure in _figures)
+            {
+                figure.Rotate(angle);
+            }
+        }
+
         public void ClipToFrame(Rectangle frame)
         {
             for (int i = 0; i < Figures.Count; i++)
@@ -56,6 +64,17 @@ namespace CG_Lab4.Models
         {
             get => _figures[index];
             set => _figures[index] = value;
+        }
+
+        public void WriteToFile(StreamWriter sw)
+        {
+            foreach (var figure in Figures)
+            {
+                if (figure.WriteToFile(sw))
+                {
+                    sw.Write('\n');
+                }
+            }
         }
 
 

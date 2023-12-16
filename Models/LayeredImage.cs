@@ -2,7 +2,60 @@
 {
     public class LayeredImage
     {
-        public LayeredImage() { }
+        public void SaveImage(string filename)
+        {
+            FileStream fs = new(filename, FileMode.Create);
+            var sw = new StreamWriter(fs);
+
+            foreach (var layer in Layers)
+            {
+                layer.WriteToFile(sw);
+            }
+
+            sw.Close();
+        }
+
+        public void LoadImage(string filename)
+        {
+            Layers.Clear();
+            Drawable.Clear();
+
+            try
+            {
+                using StreamReader sr = new(filename);
+                while (!sr.EndOfStream)
+                {
+                    string line = sr.ReadLine();
+                    if (line == null) return;
+
+                    string[] numbersAsString = line.Split(' ', '\t', '\n', '\r');
+                    Color color = Color.FromName(numbersAsString[6]);
+
+                    if (int.TryParse(numbersAsString[0], out int x1) &&
+                        int.TryParse(numbersAsString[1], out int y1) &&
+                        int.TryParse(numbersAsString[2], out int x2) &&
+                        int.TryParse(numbersAsString[3], out int y2) &&
+                        int.TryParse(numbersAsString[4], out int x3) &&
+                        int.TryParse(numbersAsString[5], out int y3))
+                    {
+                        Polygon polygon = new(new Point(x1, y1), new Point(x2, y2), new Point(x3, y3))
+                        {
+                            FillColor = color
+                        };
+                        Layer layer = new(polygon);
+                        Add(layer);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Неверный формат данных в файле");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка при чтении файла: {ex.Message}");
+            }
+        }
 
         public void ChangeFrame(Rectangle frame)
         {
@@ -62,9 +115,29 @@
                 }
             }
         }
+
+        internal void Rotate(int selectedLayer, double angle)
+        {
+            var layer = Layers[selectedLayer];
+
+            foreach (var figure in layer.Figures)
+            {
+                foreach (var point in figure.Insides)
+                {
+                    Drawable.Remove(point);
+                }
+                foreach (var point in figure.Borders)
+                {
+                    Drawable.Remove(point);
+                }
+            }
+
+            Layers[selectedLayer].Rotate(angle);
+        }
+
         public List<Layer> Layers { get => _layers.Skip(1).ToList(); }
         public Rectangle Frame { get => (Rectangle)_layers[0][0]; set => _layers[0][0] = value; }
-        public List<Point> Drawable { get; set; }
+        public List<Point> Drawable { get; set; } = new();
         private List<Layer> _layers = new(1);
     }
 }

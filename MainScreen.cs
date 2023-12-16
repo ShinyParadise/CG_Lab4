@@ -1,6 +1,5 @@
 using CG_Lab4.Drawing;
 using CG_Lab4.Models;
-using System.Drawing;
 using Point = CG_Lab4.Models.Point;
 using Rectangle = CG_Lab4.Models.Rectangle;
 using SystemRectangle = System.Drawing.Rectangle;
@@ -9,7 +8,6 @@ namespace CG_Lab4
 {
     public partial class MainScreen : Form
     {
-        private List<IFigure> figures = new();
         private LayeredImage layeredImage = new();
 
         private Graphics graphics;
@@ -21,17 +19,20 @@ namespace CG_Lab4
         private LineDrawer lineDrawer = new();
         private Filler filler = new(scaleFactor);
 
+        double angle = 0;
+        int selectedLayer = 0;
+
         private string inputPath = "../../../triangles_color.txt";
 
         public MainScreen()
         {
             InitializeComponent();
 
+            InitTriangles();
+
             InitCanvas();
 
             DrawFrame();
-
-            InitTriangles();
 
             DrawAll();
         }
@@ -40,7 +41,7 @@ namespace CG_Lab4
         {
             layeredImage.ClipAllLayersToFrame();
             //layeredImage.ClipAllLayers();
-            
+
             foreach (var layer in layeredImage.Layers)
             {
                 foreach (var fig in layer.Figures)
@@ -63,7 +64,14 @@ namespace CG_Lab4
         private List<Point> FillFigure(IFigure figure)
         {
             var insidePoint = figure.GeneratePointInside();
-            return filler.FloodFill(figure.Borders, insidePoint, figure.FillColor);
+            if (insidePoint != null)
+            {
+                return filler.FloodFill(figure.Borders, (Point)insidePoint, figure.FillColor);
+            }
+            else
+            {
+                return new();
+            }
         }
 
         private void DrawFrame()
@@ -71,8 +79,8 @@ namespace CG_Lab4
             /*var windowRect = pictureBox1.ClientRectangle;*/
             var a = new Point(0, 0);          // left top
             var b = new Point(150, 0);         // right top
-            var c = new Point(150, 200);        // right bot
-            var d = new Point(0, 200);         // left bot
+            var c = new Point(150, 150);        // right bot
+            var d = new Point(0, 150);         // left bot
 
             var frame = new Rectangle(a, b, c, d);
             layeredImage.ChangeFrame(frame);
@@ -85,8 +93,8 @@ namespace CG_Lab4
         {
             color ??= borderColor;
             var linesPoints = new List<Point>();
-            
-            for(int i = 0; i < points.Count - 1; i++)
+
+            for (int i = 0; i < points.Count - 1; i++)
             {
                 var newPoints = lineDrawer.DrawLine(points[i], points[i + 1]);
                 linesPoints.AddRange(newPoints);
@@ -108,41 +116,47 @@ namespace CG_Lab4
 
         private void InitTriangles()
         {
-            try
+            layeredImage.LoadImage(inputPath);
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+            _ = int.TryParse(textBox2.Text, out selectedLayer);
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            _ = double.TryParse(textBox1.Text, out angle);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            InitCanvas();
+
+            layeredImage.Rotate(selectedLayer, angle);
+
+            DrawAll();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            using SaveFileDialog saveFileDialog = new() { Filter = @"text|*.txt" };
+
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                using (StreamReader sr = new StreamReader(inputPath))
-                {
-                    while (!sr.EndOfStream)
-                    {
-                        string line = sr.ReadLine();
-                        if (line == null) return;
-
-                        string[] numbersAsString = line.Split(' ', '\t', '\n', '\r');
-                        Color color = Color.FromName(numbersAsString[6]);
-
-                        if (int.TryParse(numbersAsString[0], out int x1) &&
-                            int.TryParse(numbersAsString[1], out int y1) &&
-                            int.TryParse(numbersAsString[2], out int x2) &&
-                            int.TryParse(numbersAsString[3], out int y2) &&
-                            int.TryParse(numbersAsString[4], out int x3) &&
-                            int.TryParse(numbersAsString[5], out int y3))
-                        {
-                            Polygon polygon = new(new Point(x1, y1), new Point(x2, y2), new Point(x3, y3));
-                            polygon.FillColor = color;
-                            figures.Add(polygon);
-                            Layer layer = new(polygon);
-                            layeredImage.Add(layer);
-                        }
-                        else
-                        {
-                            Console.WriteLine("Неверный формат данных в файле");
-                        }
-                    }
-                }
+                layeredImage.SaveImage(saveFileDialog.FileName);
             }
-            catch (Exception ex)
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            using OpenFileDialog openFileDialog = new() { Filter = @"text|*.txt" };
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                Console.WriteLine($"Ошибка при чтении файла: {ex.Message}");
+                InitCanvas();
+                layeredImage.LoadImage(openFileDialog.FileName);
+                DrawAll();
             }
         }
     }
