@@ -43,12 +43,12 @@ namespace CG_Lab4.Drawing
                 {
                     points.Add(currentPoint);
 
-                    double deltaX = (x - BeginX) * (x - BeginX); double deltaY = (y - BeginY) * (y - BeginY);
+/*                    double deltaX = (x - BeginX) * (x - BeginX); double deltaY = (y - BeginY) * (y - BeginY);
                     double distance = Math.Sqrt(deltaX + deltaY);
                     R = (int)(fillColor.R + deltaR * distance / 5000) % 256;
                     G = (int)(fillColor.G + deltaG * distance / 5000) % 256;
                     B = (int)(fillColor.B + deltaB * distance / 5000) % 256;
-                    fillColor = Color.FromArgb(R, G, B);
+                    fillColor = Color.FromArgb(R, G, B);*/
 
                     var rightNeighbor = new Point(currentPoint.X + 1, currentPoint.Y, fillColor);
                     var leftNeighbor = new Point(currentPoint.X - 1, currentPoint.Y, fillColor);
